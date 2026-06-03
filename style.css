@@ -1777,7 +1777,7 @@ h1, h2, h3, h4, h5, h6 {
         display: none; /* Hide in header on small screens */
     }
     .mobile-nav-btn-wrapper {
-        display: block;
+        display: block !important;
         margin-top: 15px;
     }
     .mobile-nav-btn-wrapper .mobile-nav-btn {
@@ -2218,7 +2218,7 @@ body.page-leaving .transition-loader {
 }
 
 /* Back link styling in header (matches nav menu link style) */
-.main-header .logo.back-logo {
+.back-logo {
     display: inline-flex !important;
     align-items: center !important;
     gap: 8px !important;
@@ -2230,18 +2230,18 @@ body.page-leaving .transition-loader {
     letter-spacing: normal !important;
 }
 
-.main-header .logo.back-logo i {
+.back-logo i {
     font-size: 0.9rem !important;
     color: var(--text-secondary) !important;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color var(--transition-fast) !important;
     text-shadow: none !important;
 }
 
-.main-header .logo.back-logo:hover {
+.back-logo:hover {
     color: var(--text-primary) !important;
 }
 
-.main-header .logo.back-logo:hover i {
+.back-logo:hover i {
     transform: translateX(-4px) !important;
     color: var(--text-primary) !important;
 }

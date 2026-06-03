@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Sinan - Graphics & Content Designer</title>
+    <meta name="description" content="Explore the creative portfolio of Sinan, featuring high-fidelity brand identities, modern poster layouts, and social media campaigns.">
+    <meta name="keywords" content="Sinan, sinante, sinante portfolio, graphics design, social media manager, content creator, branding">
+    <meta name="author" content="Sinan">
+    <meta name="google-site-verification" content="ryqE9yQcS9pZVlSauMig1TpUKdt-Kj18AlzWYWKKWnc" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <script>
+        document.body.classList.add('page-entering');
+    </script>
+    
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay">
+        <div class="transition-loader">
+            <div class="logo transition-logo">SINAN<span>.</span></div>
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+    
+    <!-- Theme & Color Customizer -->
+    <div class="customizer-toggle" id="customizerToggle" title="Customize Design">
+        <i class="fa-solid fa-palette"></i>
+    </div>
+    
+    <div class="customizer-panel" id="customizerPanel">
+        <div class="customizer-header">
+            <h3>Customize Theme</h3>
+            <button class="close-customizer" id="closeCustomizer">&times;</button>
+        </div>
+        <div class="customizer-body">
+            <div class="customizer-section">
+                <h4>Accent Color</h4>
+                <div class="color-presets">
+                    <span class="color-preset active" data-color="#407088" style="background-color: #407088;" title="Slate Blue (Original)"></span>
+                    <span class="color-preset" data-color="#8a2be2" style="background-color: #8a2be2;" title="Neon Purple"></span>
+                    <span class="color-preset" data-color="#00adb5" style="background-color: #00adb5;" title="Teal Glow"></span>
+                    <span class="color-preset" data-color="#10b981" style="background-color: #10b981;" title="Emerald"></span>
+                    <span class="color-preset" data-color="#f59e0b" style="background-color: #f59e0b;" title="Amber Gold"></span>
+                    <span class="color-preset" data-color="#ef4444" style="background-color: #ef4444;" title="Sunset Red"></span>
+                </div>
+            </div>
+            <div class="customizer-section">
+                <h4>Theme Mode</h4>
+                <div class="theme-toggle-wrapper">
+                    <button class="theme-btn active" id="darkThemeBtn"><i class="fa-solid fa-moon"></i> Dark</button>
+                    <button class="theme-btn" id="lightThemeBtn"><i class="fa-solid fa-sun"></i> Light</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">SINAN<span>.</span></a>
+            
+            <nav class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#services" class="nav-link">Services</a></li>
+                    <li><a href="#portfolio" class="nav-link active">Portfolio</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="#contact" class="nav-btn">Hire Me</a>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section (Recreating Home.jpg Design) -->
+        <section id="home" class="hero-section">
+            <div class="hero-container">
+                <!-- Left Side: Interactive typography and content -->
+                <div class="hero-content">
+                    <div class="hero-text-wrapper">
+                        <h1 class="hero-title animate-fade-in">
+                            <span class="title-light">Hello, I'm</span>
+                            <span class="title-bold">SINAN <span class="accent-dot">.</span></span>
+                        </h1>
+                        <h2 class="hero-subtitle animate-slide-up">
+                            <span>Graphics designer</span>
+                            <span>Social media & content designer</span>
+                        </h2>
+                        
+                        <div class="hero-cta-wrapper animate-fade-up">
+                            <a href="#portfolio" class="portfolio-btn">
+                               <span class="btn-text">View My Portfolio</span>
+                                <span class="btn-divider"></span>
+                                <span class="btn-icon"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Custom positioned background photo of Sinan -->
+                <div class="hero-image-container">
+                    <div class="hero-img-bg"></div>
+                    <div class="hero-overlay"></div>
+                </div>
+            </div>
+            
+            <!-- Subtle floating scroll indicator -->
+            <div class="scroll-indicator">
+                <span class="mouse">
+                    <span class="wheel"></span>
+                </span>
+                <span class="arrow-down"></span>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="about-section section-padding">
+            <div class="section-container">
+                <div class="section-header align-center">
+                    <span class="subtitle">About Me</span>
+                    <h2>Who is Sinan?</h2>
+                    <div class="section-underline"></div>
+                </div>
+
+                <div class="about-grid">
+                    <!-- Left: Interactive Profile Card -->
+                    <div class="about-card-wrapper animate-on-scroll" data-animation="slide-right">
+                        <div class="about-profile-card">
+                            <div class="profile-img-holder">
+                                <img src="./first pic on about page.jpg.jpeg" alt="Sinan Profile" class="about-avatar">
+                            </div>
+                            <div class="profile-card-content">
+                                <h3>Sinan</h3>
+                                <p class="card-role">Visual Architect & Storyteller</p>
+                                <div class="profile-socials">
+                                    <a href="https://x.com/Sinan_p_2" class="social-icon" title="X (Twitter)" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                                    <a href="https://www.instagram.com/_.sinanhh/?utm_source=ig_web_button_share_sheet" class="social-icon" title="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                                    <a href="#" class="social-icon" title="Dribbble" target="_blank"><i class="fa-brands fa-dribbble"></i></a>
+                                    <a href="https://www.linkedin.com/in/sinanc/" class="social-icon" title="LinkedIn" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Bio and Dynamic Stats -->
+                    <div class="about-details-wrapper animate-on-scroll" data-animation="slide-left">
+                        <div class="about-bio">
+                            <h3>Combining Graphic Aesthetics with Social Strategy</h3>
+                            <p>I am a passionate <strong>Graphics Designer</strong> and <strong>Social Media & Content Designer</strong> dedicated to transforming brands through compelling visual design and calculated digital campaigns. I believe that design is not just how it looks, but how it works and communicates.</p>
+                            <p>Whether you need eye-catching brand identities, scroll-stopping social media assets, or an all-inclusive social strategy to scale your presence, I craft digital experiences that engage audiences and drive real growth.</p>
+                        </div>
+
+                        <div class="about-stats">
+                            <div class="stat-box">
+                                <div class="stat-number" data-target="3">0</div>
+                                <div class="stat-label">Years Experience</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-number" data-target="75">0</div>
+                                <div class="stat-label">Projects Completed</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-number" data-target="100">0</div>
+                                <div class="stat-label">% Satisfied Clients</div>
+                            </div>
+                        </div>
+
+                        <div class="about-actions">
+                            <a href="#contact" class="custom-btn primary-btn">Start a Project</a>
+                            <a href="./resume.pdf" class="custom-btn secondary-btn" id="downloadCV" target="_blank"><i class="fa-solid fa-download"></i> Get Resume</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services & Skills Section -->
+        <section id="services" class="services-section section-padding">
+            <div class="section-container">
+                <div class="section-header align-center">
+                    <span class="subtitle">What I Do Best</span>
+                    <h2>Services & Skills</h2>
+                    <div class="section-underline"></div>
+                </div>
+
+                <!-- Services Cards -->
+                <div class="services-grid">
+                    <!-- Service 1: Graphic Design -->
+                    <div class="service-card animate-on-scroll" data-animation="fade-up">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                        </div>
+                        <h3>Graphic Design</h3>
+                        <p>Visualizing ideas into functional art. Specialized in brand identities, high-impact vector artwork, flyers, promotional print materials, and UI layouts.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Logo & Branding Systems</li>
+                            <li><i class="fa-solid fa-check"></i> Social Media Content Design</li>
+                            <li><i class="fa-solid fa-check"></i> Marketing & Ad Collateral</li>
+                            <li><i class="fa-solid fa-check"></i> Editorial & Packaging Design</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 2: Social Media Strategy -->
+                    <div class="service-card animate-on-scroll" data-animation="fade-up" style="animation-delay: 0.1s;">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3>Social Media Management</h3>
+                        <p>Scaling digital footprints with strategic execution. Curating campaigns, creating calendars, tracking analytics, and building active, loyal online communities.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Multi-Platform Growth Strategy</li>
+                            <li><i class="fa-solid fa-check"></i> Content Planning & Copywriting</li>
+                            <li><i class="fa-solid fa-check"></i> Audience Engagement & Outreach</li>
+                            <li><i class="fa-solid fa-check"></i> Analytics & Performance Audits</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 3: Content Creation -->
+                    <div class="service-card animate-on-scroll" data-animation="fade-up" style="animation-delay: 0.2s;">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-photo-film"></i>
+                        </div>
+                        <h3>Content Creation</h3>
+                        <p>Connecting brands to users through storytelling. Crafting dynamic video reels, customized illustrations, and compelling motion designs optimized for virality.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> TikTok & Instagram Reels</li>
+                            <li><i class="fa-solid fa-check"></i> Custom Vector Illustrations</li>
+                            <li><i class="fa-solid fa-check"></i> Animation & Motion Graphics</li>
+                            <li><i class="fa-solid fa-check"></i> Dynamic Carousel Templates</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Skills Breakdown -->
+                <div class="skills-wrapper section-padding-top">
+                    <div class="skills-inner-grid">
+                        <div class="skills-description">
+                            <h3>My Creative Toolbox</h3>
+                            <p>We believe beautiful designs are fueled by technical precision. Here is the software and skill sets I rely on to turn concepts into high-performing digital realities daily.</p>
+                        </div>
+                        
+                        <div class="skills-bars-container">
+                            <!-- Skill 1 -->
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Adobe Photoshop</span>
+                                    <span class="skill-percentage">95%</span>
+                                </div>
+                                <div class="skill-progress-bg">
+                                    <div class="skill-progress-bar" data-progress="95%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Skill 2 -->
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Adobe Illustrator</span>
+                                    <span class="skill-percentage">90%</span>
+                                </div>
+                                <div class="skill-progress-bg">
+                                    <div class="skill-progress-bar" data-progress="90%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Skill 3 -->
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Figma / UI Design</span>
+                                    <span class="skill-percentage">85%</span>
+                                </div>
+                                <div class="skill-progress-bg">
+                                    <div class="skill-progress-bar" data-progress="85%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Skill 4 -->
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Social Media Strategy & SEO</span>
+                                    <span class="skill-percentage">90%</span>
+                                </div>
+                                <div class="skill-progress-bg">
+                                    <div class="skill-progress-bar" data-progress="90%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Gallery Section -->
+        <section id="portfolio" class="portfolio-section section-padding">
+            <div class="section-container">
+                <div class="section-header align-center">
+                    <span class="subtitle">My Creative Works</span>
+                    <h2>Featured Portfolio</h2>
+                    <div class="section-underline"></div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="portfolio-filters">
+                    <button class="filter-btn active" data-filter="all">All Projects</button>
+                    <button class="filter-btn" data-filter="graphic">Graphics Design</button>
+                    <button class="filter-btn" data-filter="social">Social Media</button>
+                    <button class="filter-btn" data-filter="branding">Branding</button>
+                </div>
+
+                <!-- Portfolio Grid -->
+                <div class="portfolio-grid" id="portfolioGrid">
+                    <!-- Project 1 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="branding" data-animation="fade-up">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Aesthetic Brand Identity" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Branding</span>
+                                        <h3>Aesthetic Brand Identity</h3>
+                                        <button class="view-project-btn" data-project-id="1">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="graphic" data-animation="fade-up" style="animation-delay: 0.1s;">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Premium Poster Layout" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Graphics Design</span>
+                                        <h3>Modern Digital Posters</h3>
+                                        <button class="view-project-btn" data-project-id="2">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="social" data-animation="fade-up" style="animation-delay: 0.2s;">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Instagram Grid Strategy" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Social Media</span>
+                                        <h3>Instagram Grid Architecture</h3>
+                                        <button class="view-project-btn" data-project-id="3">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="graphic" data-animation="fade-up">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Minimalist Package Design" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Graphics Design</span>
+                                        <h3>Vector Illustrative Layouts</h3>
+                                        <button class="view-project-btn" data-project-id="4">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="social" data-animation="fade-up" style="animation-delay: 0.1s;">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Dynamic Campaign" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Social Media</span>
+                                        <h3>Viral Reel Campaign Strategy</h3>
+                                        <button class="view-project-btn" data-project-id="5">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 6 -->
+                    <div class="portfolio-item animate-on-scroll" data-category="branding" data-animation="fade-up" style="animation-delay: 0.2s;">
+                        <div class="portfolio-card">
+                            <div class="portfolio-img-wrapper">
+                                <img src="./Home.jpg" alt="Typography Layout" class="portfolio-img">
+                                <div class="portfolio-card-overlay">
+                                    <div class="portfolio-overlay-content">
+                                        <span class="project-tag">Branding</span>
+                                        <h3>Typography Brand Systems</h3>
+                                        <button class="view-project-btn" data-project-id="6">Explore Details <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Timeline Section -->
+        <section class="timeline-section section-padding">
+            <div class="section-container">
+                <div class="section-header align-center">
+                    <span class="subtitle">My Story</span>
+                    <h2>Experience Timeline</h2>
+                    <div class="section-underline"></div>
+                </div>
+
+                <div class="timeline">
+                    <!-- Timeline Item 1 -->
+                    <div class="timeline-item left animate-on-scroll" data-animation="slide-right">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2024 - Present</div>
+                        <div class="timeline-content">
+                            <h3>Lead Social Media Strategist</h3>
+                            <h4>Creative Agencies & Freelance</h4>
+                            <p>Managing complete digital architectures, crafting content calendars, driving visual storytelling, and generating engagement metrics yielding over 150% brand channel growth.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2 -->
+                    <div class="timeline-item right animate-on-scroll" data-animation="slide-left">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2023 - 2024</div>
+                        <div class="timeline-content">
+                            <h3>Senior Graphics Designer</h3>
+                            <h4>Studio Media Hub</h4>
+                            <p>Pioneered aesthetic visual identity guidelines, developed custom graphics assets for over 30 campaigns, and designed comprehensive social media templates and UI mockups.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="timeline-item left animate-on-scroll" data-animation="slide-right">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2022 - 2023</div>
+                        <div class="timeline-content">
+                            <h3>Freelance Visual Content Creator</h3>
+                            <h4>Global Remote Partnerships</h4>
+                            <p>Spearheaded bespoke graphic assets, custom Instagram carousel designs, vector illustation suites, and short-form reels for global startups.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section section-padding">
+            <div class="section-container">
+                <div class="section-header align-center">
+                    <span class="subtitle">Get In Touch</span>
+                    <h2>Let's Make Magic</h2>
+                    <div class="section-underline"></div>
+                </div>
+
+                <div class="contact-grid">
+                    <!-- Contact Info Card -->
+                    <div class="contact-info-panel animate-on-scroll" data-animation="slide-right">
+                        <h3>Connect with Me</h3>
+                        <p>Have an exciting project, design request, or strategic visual goal in mind? Shoot me a message! I'm always open to discussing new opportunities, creative collaborations, or branding systems.</p>
+                        
+                        <div class="info-details">
+                            <div class="info-item">
+                                <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div class="info-text">
+                                    <span>Mail me directly</span>
+                                    <a href="mailto:snanh.op@gmail.com">snanh.op@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                                <div class="info-text">
+                                    <span>Call / WhatsApp</span>
+                                    <a href="https://wa.me/918075944234" target="_blank">+91 80759 44234</a>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="info-text">
+                                    <span>Based in</span>
+                                    <p>Kerala, India</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="follow-me">
+                            <h4>Find me on professional networks</h4>
+                            <div class="social-links-grid">
+                                <a href="https://x.com/Sinan_p_2" class="social-link" target="_blank"><i class="fa-brands fa-x-twitter"></i> X (Twitter)</a>
+                                <a href="https://www.instagram.com/_.sinanhh/?utm_source=ig_web_button_share_sheet" class="social-link" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                                <a href="https://www.linkedin.com/in/sinanc/" class="social-link" target="_blank"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form Card -->
+                    <div class="contact-form-panel animate-on-scroll" data-animation="slide-left">
+                        <h3>Send a Message</h3>
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group floating-group">
+                                    <input type="text" id="nameInput" required placeholder=" " autocomplete="name">
+                                    <label for="nameInput">Your Name</label>
+                                </div>
+                                <div class="form-group floating-group">
+                                    <input type="email" id="emailInput" required placeholder=" " autocomplete="email">
+                                    <label for="emailInput">Email Address</label>
+                                </div>
+                            </div>
+                            <div class="form-group floating-group">
+                                    <input type="text" id="subjectInput" required placeholder=" ">
+                                    <label for="subjectInput">Subject</label>
+                            </div>
+                            <div class="form-group floating-group">
+                                <textarea id="messageInput" required rows="5" placeholder=" "></textarea>
+                                <label for="messageInput">Tell me about your project...</label>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <span>Send Message</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                        <div id="formSuccess" class="form-success-alert">
+                            <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                            <h3>Thank You!</h3>
+                            <p>Your message has been sent successfully. Sinan will reach out to you within 24 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">SINAN<span>.</span></a>
+                <p>Exquisite design and visual communication that empowers businesses to grow globally.</p>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 SINAN. All rights reserved.</p>
+                <div class="footer-meta">
+                    <p>Designed by Sinan &middot; Crafted with pixel perfection</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Project Modal Overlay -->
+    <div class="project-modal" id="projectModal">
+        <div class="modal-card">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <div class="modal-grid">
+                <div class="modal-image-holder">
+                    <img src="./Home.jpg" alt="Project Preview" id="modalImage">
+                </div>
+                <div class="modal-details">
+                    <span class="modal-tag" id="modalTag">Graphics Design</span>
+                    <h3 id="modalTitle">Project Title Placeholder</h3>
+                    <p class="modal-desc" id="modalDescription">Detailed project description goes here. It explains the design concepts, challenges, tools used, and results achieved.</p>
+                    
+                    <div class="project-meta-info">
+                        <div class="meta-row">
+                            <strong>Client:</strong>
+                            <span id="modalClient">Creative Co.</span>
+                        </div>
+                        <div class="meta-row">
+                            <strong>Tools Used:</strong>
+                            <span id="modalTools">Adobe Photoshop, Illustrator</span>
+                        </div>
+                        <div class="meta-row">
+                            <strong>Completion:</strong>
+                            <span id="modalDate">May 2026</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <a href="#" class="modal-btn primary-modal-btn" target="_blank" id="modalProjectLink">Live Preview <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script File -->
+    <script src="app.js"></script>
+</body>
+</html>

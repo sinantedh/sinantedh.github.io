@@ -6,33 +6,37 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // 1. Mobile Menu & Navigation Control
+    // 1. Mobile & Desktop Menu Control
     // ==========================================
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
     const mainHeader = document.querySelector('.main-header');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    // Toggle Mobile Drawer Menu
-    menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-
-    // Close mobile menu when clicking nav links
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            navMenu.classList.remove('active');
+    if (menuToggle && navMenu) {
+        // Toggle Drawer Menu
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
-    });
+
+        // Close menu when clicking nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    }
 
     // Shrink header on scroll
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            mainHeader.classList.add('scrolled');
-        } else {
-            mainHeader.classList.remove('scrolled');
+        if (mainHeader) {
+            if (window.scrollY > 50) {
+                mainHeader.classList.add('scrolled');
+            } else {
+                mainHeader.classList.remove('scrolled');
+            }
         }
     });
 
@@ -43,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
     
     const highlightActiveSection = () => {
+        if (sections.length === 0) return; // Safely exit if on a page without sections (like index.html)
         let scrollPosition = window.scrollY + 120; // offset for nav header height
 
         sections.forEach(section => {
@@ -75,20 +80,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightThemeBtn = document.getElementById('lightThemeBtn');
 
     // Toggle Customizer Drawer Panel
-    customizerToggle.addEventListener('click', () => {
-        customizerPanel.classList.toggle('active');
-    });
+    if (customizerToggle && customizerPanel && closeCustomizer) {
+        customizerToggle.addEventListener('click', () => {
+            customizerPanel.classList.toggle('active');
+        });
 
-    closeCustomizer.addEventListener('click', () => {
-        customizerPanel.classList.remove('active');
-    });
-
-    // Close customizer clicking outside
-    document.addEventListener('click', (e) => {
-        if (!customizerPanel.contains(e.target) && !customizerToggle.contains(e.target)) {
+        closeCustomizer.addEventListener('click', () => {
             customizerPanel.classList.remove('active');
-        }
-    });
+        });
+
+        // Close customizer clicking outside
+        document.addEventListener('click', (e) => {
+            if (!customizerPanel.contains(e.target) && !customizerToggle.contains(e.target)) {
+                customizerPanel.classList.remove('active');
+            }
+        });
+    }
 
     // Convert hex to RGB values for glow styling
     const hexToRgb = (hex) => {
@@ -101,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Apply color accent updates
     const setAccentColor = (color) => {
+        if (!color) return;
         const rgb = hexToRgb(color);
         document.documentElement.style.setProperty('--accent-color', color);
         document.documentElement.style.setProperty('--accent-glow', `rgba(${rgb}, 0.3)`);
@@ -131,19 +139,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'dark') {
             document.body.classList.remove('light-theme');
             document.body.classList.add('dark-theme');
-            darkThemeBtn.classList.add('active');
-            lightThemeBtn.classList.remove('active');
+            if (darkThemeBtn) darkThemeBtn.classList.add('active');
+            if (lightThemeBtn) lightThemeBtn.classList.remove('active');
         } else {
             document.body.classList.remove('dark-theme');
             document.body.classList.add('light-theme');
-            lightThemeBtn.classList.add('active');
-            darkThemeBtn.classList.remove('active');
+            if (lightThemeBtn) lightThemeBtn.classList.add('active');
+            if (darkThemeBtn) darkThemeBtn.classList.remove('active');
         }
         localStorage.setItem('sinan-theme-mode', mode);
     };
 
-    darkThemeBtn.addEventListener('click', () => setThemeMode('dark'));
-    lightThemeBtn.addEventListener('click', () => setThemeMode('light'));
+    if (darkThemeBtn) darkThemeBtn.addEventListener('click', () => setThemeMode('dark'));
+    if (lightThemeBtn) lightThemeBtn.addEventListener('click', () => setThemeMode('light'));
 
     // Loading stored settings from localStorage on startup
     const savedAccent = localStorage.getItem('sinan-accent-color');
@@ -201,12 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 entry.target.classList.add('animated');
 
                 // Trigger skills if it's the skills section
-                if (entry.target.classList.contains('skills-bars-container') || entry.target.contains(skillBars[0])) {
+                if (entry.target.classList.contains('skills-bars-container') || (skillBars.length > 0 && entry.target.contains(skillBars[0]))) {
                     animateSkills();
                 }
 
                 // Trigger stats counters if scrolling past statistics container
-                if (statsContainer && entry.target.contains(statsContainer)) {
+                if (statsContainer && stats.length > 0 && entry.target.contains(statsContainer)) {
                     runStatsCounters();
                 }
                 
@@ -233,34 +241,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const portfolioItems = document.querySelectorAll('.portfolio-item');
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active classes
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+    if (filterButtons && filterButtons.length > 0) {
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active classes
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
 
-            const filterValue = button.getAttribute('data-filter');
+                const filterValue = button.getAttribute('data-filter');
 
-            portfolioItems.forEach(item => {
-                const category = item.getAttribute('data-category');
-                
-                if (filterValue === 'all' || category === filterValue) {
-                    item.classList.remove('hidden');
-                    // Add subtle scaling animations back
-                    setTimeout(() => {
-                        item.style.transform = 'scale(1)';
-                        item.style.opacity = '1';
-                    }, 50);
-                } else {
-                    item.style.transform = 'scale(0.8)';
-                    item.style.opacity = '0';
-                    setTimeout(() => {
-                        item.classList.add('hidden');
-                    }, 300);
-                }
+                portfolioItems.forEach(item => {
+                    const category = item.getAttribute('data-category');
+                    
+                    if (filterValue === 'all' || category === filterValue) {
+                        item.classList.remove('hidden');
+                        // Add subtle scaling animations back
+                        setTimeout(() => {
+                            item.style.transform = 'scale(1)';
+                            item.style.opacity = '1';
+                        }, 50);
+                    } else {
+                        item.style.transform = 'scale(0.8)';
+                        item.style.opacity = '0';
+                        setTimeout(() => {
+                            item.classList.add('hidden');
+                        }, 300);
+                    }
+                });
             });
         });
-    });
+    }
 
 
     // ==========================================
@@ -345,85 +355,147 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Open Modal
-    viewProjectBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const projectId = btn.getAttribute('data-project-id');
-            const data = projectsData[projectId];
+    if (viewProjectBtns && viewProjectBtns.length > 0) {
+        viewProjectBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const projectId = btn.getAttribute('data-project-id');
+                const data = projectsData[projectId];
 
-            if (data) {
-                // Populate Modal Elements
-                modalTitle.innerText = data.title;
-                modalTag.innerText = data.tag;
-                modalImage.setAttribute('src', data.image);
-                modalImage.setAttribute('alt', data.title);
-                modalClient.innerText = data.client;
-                modalTools.innerText = data.tools;
-                modalDate.innerText = data.date;
-                modalDescription.innerText = data.description;
-                modalProjectLink.setAttribute('href', data.link);
+                if (data && modalTitle && modalTag && modalImage && modalClient && modalTools && modalDate && modalDescription && modalProjectLink && projectModal) {
+                    // Populate Modal Elements
+                    modalTitle.innerText = data.title;
+                    modalTag.innerText = data.tag;
+                    modalImage.setAttribute('src', data.image);
+                    modalImage.setAttribute('alt', data.title);
+                    modalClient.innerText = data.client;
+                    modalTools.innerText = data.tools;
+                    modalDate.innerText = data.date;
+                    modalDescription.innerText = data.description;
+                    modalProjectLink.setAttribute('href', data.link);
 
-                // Show Modal
-                projectModal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Lock background scrolling
-            }
+                    // Show Modal
+                    projectModal.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Lock background scrolling
+                }
+            });
         });
-    });
+    }
 
     // Close Modal Function
     const closeModal = () => {
-        projectModal.classList.remove('active');
-        document.body.style.overflow = 'auto'; // Unlock scrolling
+        if (projectModal) {
+            projectModal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Unlock scrolling
+        }
     };
 
-    closeModalBtn.addEventListener('click', closeModal);
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
 
     // Close modal clicking outside card
-    projectModal.addEventListener('click', (e) => {
-        if (e.target === projectModal) {
-            closeModal();
-        }
-    });
+    if (projectModal) {
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                closeModal();
+            }
+        });
+    }
 
     // ESC Key listener to close modal
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && projectModal.classList.contains('active')) {
+        if (e.key === 'Escape' && projectModal && projectModal.classList.contains('active')) {
             closeModal();
         }
     });
-
 
     // ==========================================
     // 7. Contact Form Simulation & Success Alert
     // ==========================================
     const contactForm = document.getElementById('contactForm');
     const formSuccessAlert = document.getElementById('formSuccess');
-    const submitBtn = contactForm.querySelector('.submit-btn');
 
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    if (contactForm && formSuccessAlert) {
+        const submitBtn = contactForm.querySelector('.submit-btn');
 
-        // Perform simple form inputs check
-        const name = document.getElementById('nameInput').value.trim();
-        const email = document.getElementById('emailInput').value.trim();
-        const message = document.getElementById('messageInput').value.trim();
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        if (name && email && message) {
-            // Animate button loading state
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.7';
-            submitBtn.querySelector('span').innerText = 'Sending...';
-            submitBtn.querySelector('i').setAttribute('class', 'fa-solid fa-spinner fa-spin');
+            // Perform simple form inputs check
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const message = document.getElementById('messageInput').value.trim();
 
-            // Simulate form submission delay
-            setTimeout(() => {
-                // Hide Form with transition
-                contactForm.style.opacity = '0';
+            if (name && email && message) {
+                // Animate button loading state
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.7';
+                submitBtn.querySelector('span').innerText = 'Sending...';
+                submitBtn.querySelector('i').setAttribute('class', 'fa-solid fa-spinner fa-spin');
+
+                // Simulate form submission delay
                 setTimeout(() => {
-                    contactForm.style.display = 'none';
-                    // Show custom checkmark success screen
-                    formSuccessAlert.style.display = 'flex';
-                }, 300);
-            }, 1500);
-        }
-    });
+                    // Hide Form with transition
+                    contactForm.style.opacity = '0';
+                    setTimeout(() => {
+                        contactForm.style.display = 'none';
+                        // Show custom checkmark success screen
+                        formSuccessAlert.style.display = 'flex';
+                    }, 300);
+                }, 1500);
+            }
+        });
+    }
+
+    // ==========================================
+    // 8. Premium Page Transition Animations
+    // ==========================================
+    const setupPageTransitions = () => {
+        const overlay = document.querySelector('.page-transition-overlay');
+        if (!overlay) return;
+
+        // On page load: remove entering class to slide it up out of screen
+        setTimeout(() => {
+            document.body.classList.remove('page-entering');
+            document.body.classList.add('page-entered');
+        }, 100);
+
+        // Intercept local page links
+        const links = document.querySelectorAll('a[href^="index.html"], a[href^="portfolio.html"]');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                
+                // Get page base name to check if we are navigating away
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                const targetPath = href.split('#')[0] || currentPath;
+
+                // If navigating to the exact same page, let browser handle normally
+                if (currentPath === targetPath && href.includes('#')) {
+                    return; 
+                }
+
+                e.preventDefault();
+                
+                // Add leaving class to slide overlay in from bottom
+                document.body.classList.remove('page-entered');
+                document.body.classList.add('page-leaving');
+
+                // Redirect after transition completes
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 650); // Matches CSS transition duration
+            });
+        });
+
+        // Safely reset in case of Back/Forward button cache
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                document.body.classList.remove('page-leaving');
+                document.body.classList.add('page-entered');
+            }
+        });
+    };
+
+    setupPageTransitions();
 });

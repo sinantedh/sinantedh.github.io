@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
     const mainHeader = document.querySelector('.main-header');
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-btn');
 
     if (menuToggle && navMenu) {
         // Toggle Drawer Menu
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 7. Contact Form Simulation & Success Alert
+    // 7. Contact Form Secure Submission
     // ==========================================
     const contactForm = document.getElementById('contactForm');
     const formSuccessAlert = document.getElementById('formSuccess');
@@ -421,9 +421,17 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
+            // Honeypot spam check (if checkbox is checked, drop it silently as spambot)
+            const botcheck = contactForm.querySelector('input[name="botcheck"]');
+            if (botcheck && botcheck.checked) {
+                console.log("Spambot detected!");
+                return;
+            }
+
             // Perform simple form inputs check
             const name = document.getElementById('nameInput').value.trim();
             const email = document.getElementById('emailInput').value.trim();
+            const subject = document.getElementById('subjectInput') ? document.getElementById('subjectInput').value.trim() : 'No Subject';
             const message = document.getElementById('messageInput').value.trim();
 
             if (name && email && message) {
@@ -433,16 +441,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.querySelector('span').innerText = 'Sending...';
                 submitBtn.querySelector('i').setAttribute('class', 'fa-solid fa-spinner fa-spin');
 
-                // Simulate form submission delay
-                setTimeout(() => {
-                    // Hide Form with transition
-                    contactForm.style.opacity = '0';
-                    setTimeout(() => {
-                        contactForm.style.display = 'none';
-                        // Show custom checkmark success screen
-                        formSuccessAlert.style.display = 'flex';
-                    }, 300);
-                }, 1500);
+                // Prepare FormData for Web3Forms API
+                const formData = new FormData();
+                // Replace 'YOUR_ACCESS_KEY_HERE' with your real Web3Forms Access Key
+                formData.append("access_key", "4744405f-697d-4aef-9a59-870e86e1da43");
+                formData.append("name", name);
+                formData.append("email", email);
+                formData.append("subject", subject);
+                formData.append("message", message);
+                formData.append("from_name", "Sinan Portfolio Contact Form");
+
+                // Submit to Web3Forms API via fetch
+                fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide Form with transition
+                        contactForm.style.opacity = '0';
+                        setTimeout(() => {
+                            contactForm.style.display = 'none';
+                            // Show custom checkmark success screen
+                            formSuccessAlert.style.display = 'flex';
+                        }, 300);
+                    } else {
+                        alert("Oops! Something went wrong: " + data.message);
+                        submitBtn.disabled = false;
+                        submitBtn.style.opacity = '1';
+                        submitBtn.querySelector('span').innerText = 'Send Message';
+                        submitBtn.querySelector('i').setAttribute('class', 'fa-solid fa-paper-plane');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error submitting form:", error);
+                    alert("Unable to send message. Please check your internet connection.");
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.querySelector('span').innerText = 'Send Message';
+                    submitBtn.querySelector('i').setAttribute('class', 'fa-solid fa-paper-plane');
+                });
             }
         });
     }

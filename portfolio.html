@@ -25,7 +25,7 @@
     <!-- Page Transition Overlay -->
     <div class="page-transition-overlay">
         <div class="transition-loader">
-            <div class="logo transition-logo">SINAN<span>.</span></div>
+            <div class="logo transition-logo">LOADING<span>.</span></div>
             <div class="loader-bar"></div>
         </div>
     </div>
@@ -65,7 +65,7 @@
     <!-- Navigation Header -->
     <header class="main-header">
         <div class="header-container">
-            <a href="index.html" class="logo">SINAN<span>.</span></a>
+            <a href="index.html" class="logo back-logo"><i class="fa-solid fa-arrow-left"></i> BACK</a>
             
             <nav class="nav-menu" id="navMenu">
                 <ul>
@@ -74,6 +74,7 @@
                     <li><a href="#services" class="nav-link">Services</a></li>
                     <li><a href="#portfolio" class="nav-link active">Portfolio</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li class="mobile-nav-btn-wrapper"><a href="#contact" class="nav-btn mobile-nav-btn">Hire Me</a></li>
                 </ul>
             </nav>
 
@@ -523,6 +524,9 @@
                     <div class="contact-form-panel animate-on-scroll" data-animation="slide-left">
                         <h3>Send a Message</h3>
                         <form id="contactForm" class="contact-form">
+                            <!-- Honeypot Spam Protection (hidden from humans, traps spambots) -->
+                            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                            
                             <div class="form-row">
                                 <div class="form-group floating-group">
                                     <input type="text" id="nameInput" required placeholder=" " autocomplete="name">

@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools by Sin | Design Utilities</title>
+    <meta name="description" content="Interactive tools and design utilities curated and built by Sinan. aspect ratio calculators and glassmorphic css generators.">
+    <meta name="keywords" content="Sinan, sinante, tools by sin, glassmorphism generator, aspect ratio cropper, design tools">
+    <meta name="author" content="Sinan">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Specific page utility styles */
+        .tools-hero {
+            padding-top: 140px;
+            padding-bottom: 50px;
+            text-align: center;
+        }
+        .tools-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+        .tools-hero p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+        
+        .tools-directory {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px 40px;
+            margin-bottom: 80px;
+            padding-top: 20px;
+        }
+        @media (max-width: 1024px) {
+            .tools-directory {
+                grid-template-columns: 1fr;
+                gap: 50px 0;
+            }
+        }
+        
+        /* Premium Folder Card Tab Shape */
+        .folder-card {
+            background: rgba(13, 16, 23, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 0 16px 16px 16px;
+            position: relative;
+            margin-top: 30px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        .folder-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .folder-card.active {
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+        }
+        
+        .folder-tab {
+            position: absolute;
+            top: -30px;
+            left: -1px;
+            height: 30px;
+            background: rgba(13, 16, 23, 0.45);
+            border-top: 1px solid var(--glass-border);
+            border-left: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-radius: 12px 12px 0 0;
+            padding: 0 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        
+        .folder-body {
+            padding: 35px;
+        }
+        
+        .folder-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .folder-summary p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .folder-summary ul {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .folder-summary ul li {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .folder-summary ul li i {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+        }
+        
+        .open-folder-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-fast);
+        }
+        .open-folder-btn:hover {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        
+        /* Expandable content area */
+        .folder-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+            border-top: 1px solid transparent;
+            padding-top: 0;
+        }
+        
+        .folder-card.active .folder-content {
+            max-height: 2000px;
+            opacity: 1;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 30px;
+            margin-top: 30px;
+        }
+        
+        /* UI & Styling controls */
+        .glass-gen-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 24px;
+            align-items: center;
+        }
+        @media (max-width: 640px) {
+            .glass-gen-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+        .glass-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            accent-color: var(--accent-color);
+        }
+        .control-group input[type="color"] {
+            width: 100%;
+            height: 36px;
+            border: 1px solid var(--glass-border);
+            background: transparent;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+        }
+        .glass-preview-box {
+            height: 200px;
+            background: linear-gradient(135deg, #00adb5 0%, #8a2be2 100%);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-preview-box::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            top: 25px;
+            left: 25px;
+            z-index: 1;
+            box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.5);
+        }
+        .glass-preview-target {
+            width: 150px;
+            height: 150px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            color: #ffffff;
+            border-radius: 12px;
+            transition: var(--transition-fast);
+        }
+        
+        .code-output-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            position: relative;
+            margin-top: 20px;
+        }
+        .code-output-area pre {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .copy-code-btn {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            background: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .copy-code-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+        
+        /* Aspect Ratio controls */
+        .ratio-gen-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .ratio-selectors {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .ratio-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 10px;
+            border-radius: var(--border-radius-md);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition-fast);
+        }
+        .ratio-btn:hover, .ratio-btn.active {
+            background: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        .ratio-preview-area {
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--border-radius-md);
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .ratio-viewport {
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            background: #111;
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .ratio-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .upload-prompt {
+            text-align: center;
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .upload-prompt i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+        
+        /* Graphic Assets Grid */
+        .assets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 500px) {
+            .assets-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .asset-item-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .asset-item-card h5 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .asset-item-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .asset-download-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            align-self: flex-start;
+            transition: var(--transition-fast);
+        }
+        .asset-download-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+        
+        /* Contrast Checker Workspace */
+        .contrast-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+        }
+        @media (max-width: 600px) {
+            .contrast-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+        .contrast-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .contrast-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .contrast-input-row label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+        .contrast-input-row input[type="color"] {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            background: transparent;
+        }
+        .contrast-input-row input[type="text"] {
+            width: 100px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            padding: 6px;
+            font-size: 0.9rem;
+            font-family: monospace;
+            text-align: center;
+        }
+        .contrast-preview {
+            background: #ffffff;
+            border-radius: var(--border-radius-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        .contrast-text-sample {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .contrast-score-badge {
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .score-pass {
+            background: #10b981;
+            color: #ffffff;
+        }
+        .score-fail {
+            background: #ef4444;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="dark-theme tools-page">
+    <script>
+        document.body.classList.add('page-entering');
+    </script>
+    
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay">
+        <div class="transition-loader">
+            <div class="logo transition-logo">LOADING<span>.</span></div>
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+    
+    <!-- Theme & Color Customizer Widget -->
+    <div class="customizer-toggle" id="customizerToggle" title="Customize Design">
+        <i class="fa-solid fa-palette"></i>
+    </div>
+    
+    <div class="customizer-panel" id="customizerPanel">
+        <div class="customizer-header">
+            <h3>Customize Theme</h3>
+            <button class="close-customizer" id="closeCustomizer">&times;</button>
+        </div>
+        <div class="customizer-body">
+            <div class="customizer-section">
+                <h4>Accent Color</h4>
+                <div class="color-presets">
+                    <span class="color-preset active" data-color="#407088" style="background-color: #407088;" title="Slate Blue"></span>
+                    <span class="color-preset" data-color="#8a2be2" style="background-color: #8a2be2;" title="Neon Purple"></span>
+                    <span class="color-preset" data-color="#00adb5" style="background-color: #00adb5;" title="Teal Glow"></span>
+                    <span class="color-preset" data-color="#10b981" style="background-color: #10b981;" title="Emerald"></span>
+                    <span class="color-preset" data-color="#f59e0b" style="background-color: #f59e0b;" title="Amber Gold"></span>
+                    <span class="color-preset" data-color="#ef4444" style="background-color: #ef4444;" title="Sunset Red"></span>
+                </div>
+            </div>
+            <div class="customizer-section">
+                <h4>Theme Mode</h4>
+                <div class="theme-toggle-wrapper">
+                    <button class="theme-btn active" id="darkThemeBtn"><i class="fa-solid fa-moon"></i> Dark</button>
+                    <button class="theme-btn" id="lightThemeBtn"><i class="fa-solid fa-sun"></i> Light</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="back-logo" style="font-size: 0.95rem; font-weight: 500; font-family: 'Inter', sans-serif; color: #9ca3af; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;"><i class="fa-solid fa-arrow-left" style="font-size: 0.9rem; color: #9ca3af; transition: transform 0.3s ease;"></i> BACK</a>
+            
+            <nav class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+                    <li><a href="#" class="nav-link" id="drawerLoginToggle"><i class="fa-solid fa-lock"></i> Login / Lock</a></li>
+                    <li><a href="#" class="nav-link" id="drawerAdminToggle"><i class="fa-solid fa-user-shield"></i> Admin Panel</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="desktop-menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="section-container">
+        <!-- Access Gate Lock Screen -->
+        <div id="lockScreenGate" class="lock-screen-gate">
+            <div class="lock-card">
+                <div class="lock-icon-wrapper">
+                    <i class="fa-solid fa-lock" id="lockIcon"></i>
+                </div>
+                <h2>Tools Portal Access</h2>
+                <p class="lock-subtitle">Exquisite design utilities and resources. Request access or sign in to unlock the workspace.</p>
+                
+                <!-- Feedback Alerts -->
+                <div id="lockMessage" class="lock-message" style="display: none;"></div>
+                
+                <form id="lockForm" class="lock-form">
+                    <div class="form-group floating-group">
+                        <input type="email" id="gateEmail" required placeholder=" " autocomplete="email">
+                        <label for="gateEmail">Email Address</label>
+                    </div>
+                    <div class="form-group floating-group">
+                        <input type="password" id="gatePassword" required placeholder=" " autocomplete="current-password">
+                        <label for="gatePassword">Password</label>
+                    </div>
+                    
+                    <div class="lock-form-actions">
+                        <button type="button" class="gate-btn secondary" id="btnRequestAccess">Request Access</button>
+                        <button type="submit" class="gate-btn primary" id="btnLogin">Unlock Sandbox</button>
+                    </div>
+                </form>
+
+                <div class="admin-trigger-area">
+                    <span id="triggerAdminPanel" title="Admin Portal Key"><i class="fa-solid fa-user-shield"></i> Admin Access</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Approvals Drawer Overlay -->
+        <div id="adminApprovalsPanel" class="admin-panel" style="display: none;">
+            <div class="admin-panel-backdrop" id="adminBackdrop"></div>
+            <div class="admin-panel-window">
+                <div class="admin-panel-header">
+                    <h3><i class="fa-solid fa-user-shield"></i> Admin Portal</h3>
+                    <button class="close-admin" id="closeAdminBtn">&times;</button>
+                </div>
+                <div class="admin-panel-body">
+                    <p class="admin-help">Manage user registration requests. Toggle status to grant access instantly.</p>
+                    <div class="admin-loading" id="adminLoading" style="display: none;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Processing requests...
+                    </div>
+                    <ul class="user-requests-list" id="userRequestsList">
+                        <!-- Populated dynamically via JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Workspace Container (Hidden initially) -->
+        <div id="toolsWorkspace" style="display: none;">
+            <!-- Hero Section -->
+            <section class="tools-hero">
+            <h1>Tools by Sin<span class="accent-dot" style="color: var(--accent-color);">.</span></h1>
+            <p>Interactive mini utilities and design resources grouped into categories for easy access.</p>
+        </section>
+
+        <!-- Tools Directory Folders Grid -->
+        <section class="tools-directory">
+            
+            <!-- Folder 1: UI & Styling -->
+            <div class="folder-card animate-on-scroll" data-folder="ui-styling">
+                <div class="folder-tab">
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <span>UI & Styling</span>
+                </div>
+                <div class="folder-body">
+                    <div class="folder-summary">
+                        <div class="folder-icon-circle accent-teal">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h4>UI & Styling</h4>
+                        <p class="folder-desc">Backdrop blur and opacity styling generator.</p>
+                        <span class="folder-meta">2 Utilities</span>
+                        <button class="open-folder-btn"><i class="fa-solid fa-folder-open"></i> Launch Tool</button>
+                    </div>
+                    
+                    <div class="folder-content">
+                        <div class="glass-gen-workspace">
+                            <div class="glass-controls">
+                                <div class="control-group">
+                                    <label>Blur Intensity <span id="valBlur">10px</span></label>
+                                    <input type="range" id="rangeBlur" min="0" max="30" value="10">
+                                </div>
+                                <div class="control-group">
+                                    <label>Opacity <span id="valOpacity">0.45</span></label>
+                                    <input type="range" id="rangeOpacity" min="0" max="100" value="45">
+                                </div>
+                                <div class="control-group">
+                                    <label>Border Glow <span id="valBorder">0.08</span></label>
+                                    <input type="range" id="rangeBorder" min="0" max="100" value="8">
+                                </div>
+                                <div class="control-group">
+                                    <label>Accent Backdrop Color</label>
+                                    <input type="color" id="colorBack" value="#0d1017">
+                                </div>
+                            </div>
+                            
+                            <div class="glass-preview-box">
+                                <div class="glass-preview-target" id="glassTarget">
+                                    Interactive Preview
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="code-output-area">
+                            <button class="copy-code-btn" id="btnCopyCode">Copy CSS</button>
+                            <pre><code id="codeOutput">/* Glassmorphism CSS Code */</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Folder 2: Social Media Ratio -->
+            <div class="folder-card animate-on-scroll" data-folder="social-crops">
+                <div class="folder-tab">
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <span>Social Crops</span>
+                </div>
+                <div class="folder-body">
+                    <div class="folder-summary">
+                        <div class="folder-icon-circle accent-purple">
+                            <i class="fa-solid fa-crop-simple"></i>
+                        </div>
+                        <h4>Social Crops</h4>
+                        <p class="folder-desc">Preview layouts and aspect ratios before going live.</p>
+                        <span class="folder-meta">4 Aspect Ratios</span>
+                        <button class="open-folder-btn"><i class="fa-solid fa-folder-open"></i> Launch Tool</button>
+                    </div>
+                    
+                    <div class="folder-content">
+                        <div class="ratio-gen-workspace">
+                            <div class="ratio-selectors">
+                                <button class="ratio-btn active" data-ratio="1-1">1:1 Post</button>
+                                <button class="ratio-btn" data-ratio="9-16">9:16 Reel</button>
+                                <button class="ratio-btn" data-ratio="16-9">16:9 Youtube</button>
+                                <button class="ratio-btn" data-ratio="4-5">4:5 Portrait</button>
+                            </div>
+                            
+                            <div class="ratio-preview-area" id="ratioPreviewZone">
+                                <div class="upload-prompt" id="uploadPrompt">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Drag & Drop or Click to Upload Image</span>
+                                </div>
+                                <div class="ratio-viewport" id="ratioViewport" style="width: 200px; height: 200px; display: none;">
+                                    <img id="ratioPreviewImg" src="" alt="Cropping Preview">
+                                </div>
+                                <input type="file" id="imageUploader" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Folder 3: Creative Graphic Assets -->
+            <div class="folder-card animate-on-scroll" data-folder="graphic-assets">
+                <div class="folder-tab">
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <span>Graphic Assets</span>
+                </div>
+                <div class="folder-body">
+                    <div class="folder-summary">
+                        <div class="folder-icon-circle accent-orange">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <h4>Graphic Assets</h4>
+                        <p class="folder-desc">Curated design vectors and high-res texture packs.</p>
+                        <span class="folder-meta">2 Resources</span>
+                        <button class="open-folder-btn"><i class="fa-solid fa-folder-open"></i> Launch Tool</button>
+                    </div>
+                    
+                    <div class="folder-content">
+                        <div class="assets-grid">
+                            <div class="asset-item-card">
+                                <h5>Halftone Vector Shapes</h5>
+                                <p>Premium pack of 15 geometric vector halftones for high-contrast poster layouts.</p>
+                                <button class="asset-download-btn" onclick="alert('Halftones Pack downloaded successfully!')"><i class="fa-solid fa-download"></i> Get Vectors (12MB)</button>
+                            </div>
+                            <div class="asset-item-card">
+                                <h5>Paper Texture Overlays</h5>
+                                <p>High-resolution scan textures of crumpled paper to overlay on branding assets.</p>
+                                <button class="asset-download-btn" onclick="alert('Textures Pack downloaded successfully!')"><i class="fa-solid fa-download"></i> Get Textures (38MB)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Folder 4: Contrast & Colors -->
+            <div class="folder-card animate-on-scroll" data-folder="contrast-colors">
+                <div class="folder-tab">
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <span>Contrast & Colors</span>
+                </div>
+                <div class="folder-body">
+                    <div class="folder-summary">
+                        <div class="folder-icon-circle accent-emerald">
+                            <i class="fa-solid fa-palette"></i>
+                        </div>
+                        <h4>Contrast & Colors</h4>
+                        <p class="folder-desc">WCAG readability compliance checks and contrast math.</p>
+                        <span class="folder-meta">1 Compliance Checker</span>
+                        <button class="open-folder-btn"><i class="fa-solid fa-folder-open"></i> Launch Tool</button>
+                    </div>
+                    
+                    <div class="folder-content">
+                        <div class="contrast-workspace">
+                            <div class="contrast-inputs">
+                                <div class="contrast-input-row">
+                                    <label>Text Color</label>
+                                    <input type="color" id="contrastTextColor" value="#ffffff">
+                                    <input type="text" id="contrastTextHex" value="#ffffff">
+                                </div>
+                                <div class="contrast-input-row">
+                                    <label>Background</label>
+                                    <input type="color" id="contrastBgColor" value="#407088">
+                                    <input type="text" id="contrastBgHex" value="#407088">
+                                </div>
+                            </div>
+                            
+                            <div class="contrast-preview" id="contrastPreviewBox">
+                                <span class="contrast-text-sample" id="contrastTextSample">Sample Text</span>
+                                <span class="contrast-score-badge score-pass" id="contrastScoreBadge">PASS (WCAG AA)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+        </div> <!-- End #toolsWorkspace -->
+
+        <!-- Interactive OS-Style Workspace Window Modal -->
+        <div class="tool-modal" id="toolModal">
+            <div class="tool-modal-backdrop" id="modalBackdrop"></div>
+            <div class="tool-modal-window">
+                <div class="tool-modal-header">
+                    <div class="window-controls">
+                        <span class="window-dot close" id="modalCloseBtn" title="Close Workspace"></span>
+                        <span class="window-dot minimize" title="Minimize"></span>
+                        <span class="window-dot maximize" id="modalMaxBtn" title="Toggle Fullscreen"></span>
+                    </div>
+                    <div class="window-path" id="modalPathText">sinan / tools / code</div>
+                </div>
+                <div class="tool-modal-body" id="modalBodyContent">
+                    <!-- Loaded dynamically via JS appendChild -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">SINAN<span>.</span></a>
+                <p>Exquisite design and visual communication that empowers businesses to grow globally.</p>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 SINAN. All rights reserved.</p>
+                <div class="footer-meta">
+                    <p>Designed by Sinan &middot; Crafted with pixel perfection</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive script logic for Tools utilities -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ------------------------------------------
+            // 0. Folders Grid & Modal Workspace Logic
+            // ------------------------------------------
+            const toolModal = document.getElementById('toolModal');
+            const modalBodyContent = document.getElementById('modalBodyContent');
+            const modalPathText = document.getElementById('modalPathText');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalMaxBtn = document.getElementById('modalMaxBtn');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            const folderCards = document.querySelectorAll('.folder-card');
+            
+            let activeFolderCard = null;
+            let originalPlaceholder = null;
+            
+            const openFolderModal = (card) => {
+                activeFolderCard = card;
+                const folderName = card.querySelector('.folder-tab span').innerText;
+                const content = card.querySelector('.folder-content');
+                
+                // Set path styling breadcrumb
+                const sanitizedPath = `sinan / tools / ${folderName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+                modalPathText.innerText = sanitizedPath;
+                
+                // Create a structural anchor in the card so we know where to return the content
+                originalPlaceholder = document.createElement('div');
+                originalPlaceholder.className = 'content-placeholder';
+                originalPlaceholder.style.display = 'none';
+                content.parentNode.insertBefore(originalPlaceholder, content);
+                
+                // Transfer DOM element to workspace modal
+                modalBodyContent.appendChild(content);
+                
+                // Show modal overlay
+                document.body.classList.add('modal-open');
+                toolModal.classList.add('active');
+                
+                // Re-run color checkers calculations if launched
+                if (folderName.toLowerCase().includes('contrast') && typeof checkContrastRatio === 'function') {
+                    checkContrastRatio();
+                }
+            };
+            
+            const closeFolderModal = () => {
+                if (!activeFolderCard || !originalPlaceholder) return;
+                
+                const content = modalBodyContent.querySelector('.folder-content');
+                if (content) {
+                    // Restore DOM element to original layout position
+                    originalPlaceholder.parentNode.insertBefore(content, originalPlaceholder);
+                    originalPlaceholder.remove();
+                }
+                
+                // Remove active classes
+                document.body.classList.remove('modal-open');
+                toolModal.classList.remove('active');
+                toolModal.querySelector('.tool-modal-window').classList.remove('maximized');
+                
+                activeFolderCard = null;
+                originalPlaceholder = null;
+            };
+            
+            // Toggle maximized layout state
+            if (modalMaxBtn) {
+                modalMaxBtn.addEventListener('click', () => {
+                    toolModal.querySelector('.tool-modal-window').classList.toggle('maximized');
+                });
+            }
+            
+            // Wire click handlers for the folder cards
+            folderCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // Prevent trigger if they click links/inputs that bubbles
+                    if (e.target.closest('input, button, a')) return;
+                    openFolderModal(card);
+                });
+                
+                // Also trigger on the explicit Launch button click
+                const btn = card.querySelector('.open-folder-btn');
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openFolderModal(card);
+                    });
+                }
+            });
+            
+            if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeFolderModal);
+            if (modalBackdrop) modalBackdrop.addEventListener('click', closeFolderModal);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && toolModal.classList.contains('active')) {
+                    closeFolderModal();
+                }
+            });
+
+            // ------------------------------------------
+            // A. Glassmorphism Generator Script
+            // ------------------------------------------
+            const rangeBlur = document.getElementById('rangeBlur');
+            const rangeOpacity = document.getElementById('rangeOpacity');
+            const rangeBorder = document.getElementById('rangeBorder');
+            const colorBack = document.getElementById('colorBack');
+            const glassTarget = document.getElementById('glassTarget');
+            
+            const valBlur = document.getElementById('valBlur');
+            const valOpacity = document.getElementById('valOpacity');
+            const valBorder = document.getElementById('valBorder');
+            const codeOutput = document.getElementById('codeOutput');
+            const btnCopyCode = document.getElementById('btnCopyCode');
+            
+            const updateGlassmorphism = () => {
+                if (!rangeBlur) return;
+                const blur = rangeBlur.value;
+                const opacity = rangeOpacity.value / 100;
+                const border = rangeBorder.value / 100;
+                const color = colorBack.value;
+                
+                // Convert hex to rgb
+                const bigint = parseInt(color.replace('#', ''), 16);
+                const r = (bigint >> 16) & 255;
+                const g = (bigint >> 8) & 255;
+                const b = bigint & 255;
+                
+                // Apply Styles to Target box
+                const bgStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                const borderStyle = `1px solid rgba(255, 255, 255, ${border})`;
+                const blurStyle = `blur(${blur}px)`;
+                
+                glassTarget.style.background = bgStyle;
+                glassTarget.style.border = borderStyle;
+                glassTarget.style.backdropFilter = blurStyle;
+                glassTarget.style.webkitBackdropFilter = blurStyle;
+                
+                // Update text tags
+                valBlur.innerText = `${blur}px`;
+                valOpacity.innerText = opacity.toFixed(2);
+                valBorder.innerText = border.toFixed(2);
+                
+                // Formulate CSS Output
+                const cssCode = `background: ${bgStyle};\nborder: ${borderStyle};\nbackdrop-filter: ${blurStyle};\n-webkit-backdrop-filter: ${blurStyle};`;
+                codeOutput.innerText = cssCode;
+            };
+            
+            // Listeners for Glass Generator controls
+            if (rangeBlur) {
+                rangeBlur.addEventListener('input', updateGlassmorphism);
+                rangeOpacity.addEventListener('input', updateGlassmorphism);
+                rangeBorder.addEventListener('input', updateGlassmorphism);
+                colorBack.addEventListener('input', updateGlassmorphism);
+                updateGlassmorphism(); // initial fire
+            }
+            
+            // Copy CSS code handler
+            if (btnCopyCode) {
+                btnCopyCode.addEventListener('click', () => {
+                    navigator.clipboard.writeText(codeOutput.innerText).then(() => {
+                        btnCopyCode.innerText = 'Copied!';
+                        btnCopyCode.style.background = '#10b981'; // green feedback
+                        setTimeout(() => {
+                            btnCopyCode.innerText = 'Copy CSS';
+                            btnCopyCode.style.background = 'rgba(255, 255, 255, 0.03)';
+                        }, 1200);
+                    });
+                });
+            }
+            
+            // ------------------------------------------
+            // B. Social Ratio Previewer Script
+            // ------------------------------------------
+            const ratioPreviewZone = document.getElementById('ratioPreviewZone');
+            const imageUploader = document.getElementById('imageUploader');
+            const ratioViewport = document.getElementById('ratioViewport');
+            const ratioPreviewImg = document.getElementById('ratioPreviewImg');
+            const uploadPrompt = document.getElementById('uploadPrompt');
+            const ratioButtons = document.querySelectorAll('.ratio-btn');
+            
+            // Open uploader on preview zone click
+            if (ratioPreviewZone && imageUploader) {
+                ratioPreviewZone.addEventListener('click', () => {
+                    imageUploader.click();
+                });
+            }
+            
+            // Handle image select uploads
+            if (imageUploader) {
+                imageUploader.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            ratioPreviewImg.setAttribute('src', event.target.result);
+                            uploadPrompt.style.display = 'none';
+                            ratioViewport.style.display = 'flex';
+                            updateViewportRatio('1-1'); // default
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Update ratios on click
+            ratioButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // prevent triggering upload click
+                    
+                    ratioButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const ratio = btn.getAttribute('data-ratio');
+                    updateViewportRatio(ratio);
+                });
+            });
+            
+            const updateViewportRatio = (ratio) => {
+                if (ratioViewport.style.display === 'none') return;
+                
+                // Adjust sizing viewport according to ratio type
+                if (ratio === '1-1') {
+                    ratioViewport.style.width = '200px';
+                    ratioViewport.style.height = '200px';
+                } else if (ratio === '9-16') {
+                    ratioViewport.style.width = '120px';
+                    ratioViewport.style.height = '214px';
+                } else if (ratio === '16-9') {
+                    ratioViewport.style.width = '260px';
+                    ratioViewport.style.height = '146px';
+                } else if (ratio === '4-5') {
+                    ratioViewport.style.width = '160px';
+                    ratioViewport.style.height = '200px';
+                }
+            };
+
+            // ------------------------------------------
+            // C. WCAG Contrast Checker Script
+            // ------------------------------------------
+            const textClr = document.getElementById('contrastTextColor');
+            const textHex = document.getElementById('contrastTextHex');
+            const bgClr = document.getElementById('contrastBgColor');
+            const bgHex = document.getElementById('contrastBgHex');
+            const previewBox = document.getElementById('contrastPreviewBox');
+            const textSample = document.getElementById('contrastTextSample');
+            const scoreBadge = document.getElementById('contrastScoreBadge');
+
+            const getLuminance = (r, g, b) => {
+                const a = [r, g, b].map((v) => {
+                    v /= 255;
+                    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+                });
+                return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+            };
+
+            const hexToRGBList = (hex) => {
+                const bigint = parseInt(hex.replace('#', ''), 16);
+                const r = (bigint >> 16) & 255;
+                const g = (bigint >> 8) & 255;
+                const b = bigint & 255;
+                return [r, g, b];
+            };
+
+            const checkContrastRatio = () => {
+                if (!textClr || !bgClr) return;
+                
+                const txtHexVal = textClr.value;
+                const bgHexVal = bgClr.value;
+
+                textHex.value = txtHexVal.toUpperCase();
+                bgHex.value = bgHexVal.toUpperCase();
+
+                // Apply to preview elements
+                previewBox.style.backgroundColor = bgHexVal;
+                textSample.style.color = txtHexVal;
+
+                // Calculate Contrast Ratio
+                const rgb1 = hexToRGBList(txtHexVal);
+                const rgb2 = hexToRGBList(bgHexVal);
+
+                const l1 = getLuminance(rgb1[0], rgb1[1], rgb1[2]);
+                const l2 = getLuminance(rgb2[0], rgb2[1], rgb2[2]);
+
+                const ratio = l1 > l2 ? (l1 + 0.05) / (l2 + 0.05) : (l2 + 0.05) / (l1 + 0.05);
+
+                if (ratio >= 4.5) {
+                    scoreBadge.innerText = `PASS (${ratio.toFixed(1)}:1)`;
+                    scoreBadge.className = 'contrast-score-badge score-pass';
+                } else {
+                    scoreBadge.innerText = `FAIL (${ratio.toFixed(1)}:1)`;
+                    scoreBadge.className = 'contrast-score-badge score-fail';
+                }
+            };
+
+            // Input handlers
+            if (textClr) {
+                textClr.addEventListener('input', checkContrastRatio);
+                bgClr.addEventListener('input', checkContrastRatio);
+                
+                textHex.addEventListener('change', () => {
+                    textClr.value = textHex.value;
+                    checkContrastRatio();
+                });
+                bgHex.addEventListener('change', () => {
+                    bgClr.value = bgHex.value;
+                    checkContrastRatio();
+                });
+
+                checkContrastRatio(); // initial contrast check
+            }
+        });
+    </script>
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Authentication and Access Gate Controller -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Firebase Configuration (If placeholder values remain, local simulation activates automatically)
+            const firebaseConfig = {
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_AUTH_DOMAIN",
+                projectId: "YOUR_PROJECT_ID",
+                storageBucket: "YOUR_STORAGE_BUCKET",
+                messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+                appId: "YOUR_APP_ID"
+            };
+
+            let useSimulation = false;
+            let db = null;
+            let auth = null;
+
+            if (firebaseConfig.apiKey === "YOUR_API_KEY" || !firebaseConfig.apiKey) {
+                useSimulation = true;
+            } else {
+                try {
+                    firebase.initializeApp(firebaseConfig);
+                    db = firebase.firestore();
+                    auth = firebase.auth();
+                } catch (e) {
+                    console.error("Firebase init failed, switching to local simulation.", e);
+                    useSimulation = true;
+                }
+            }
+
+            // DOM Elements
+            const lockScreenGate = document.getElementById('lockScreenGate');
+            const toolsWorkspace = document.getElementById('toolsWorkspace');
+            const lockForm = document.getElementById('lockForm');
+            const gateEmail = document.getElementById('gateEmail');
+            const gatePassword = document.getElementById('gatePassword');
+            const btnRequestAccess = document.getElementById('btnRequestAccess');
+            const btnLogin = document.getElementById('btnLogin');
+            const lockMessage = document.getElementById('lockMessage');
+            const lockIcon = document.getElementById('lockIcon');
+            const triggerAdminPanel = document.getElementById('triggerAdminPanel');
+            const adminApprovalsPanel = document.getElementById('adminApprovalsPanel');
+            const closeAdminBtn = document.getElementById('closeAdminBtn');
+            const adminBackdrop = document.getElementById('adminBackdrop');
+            const userRequestsList = document.getElementById('userRequestsList');
+            const adminLoading = document.getElementById('adminLoading');
+            const drawerLoginToggle = document.getElementById('drawerLoginToggle');
+            const drawerAdminToggle = document.getElementById('drawerAdminToggle');
+
+            // Add visual helper for simulation mode
+            if (useSimulation) {
+                const simBadge = document.createElement('div');
+                simBadge.className = 'simulation-badge';
+                simBadge.innerHTML = '<i class="fa-solid fa-flask"></i> Offline Demo Mode (Passcode: <strong>sinan123</strong>)';
+                document.querySelector('.lock-card').insertBefore(simBadge, document.querySelector('.lock-card h2'));
+            }
+
+            // Helper to display messages
+            const showMessage = (text, type = 'error') => {
+                lockMessage.innerText = text;
+                lockMessage.style.display = 'block';
+                lockMessage.className = `lock-message ${type}`;
+                
+                if (type === 'error') {
+                    // Shake effect on lock card
+                    const card = document.querySelector('.lock-card');
+                    card.classList.add('shake');
+                    setTimeout(() => card.classList.remove('shake'), 500);
+                }
+            };
+
+            const hideMessage = () => {
+                lockMessage.style.display = 'none';
+                lockMessage.innerText = '';
+            };
+
+            // Get simulated users array
+            const getSimulatedUsers = () => {
+                return JSON.parse(localStorage.getItem('simulated_users') || '[]');
+            };
+
+            // Save simulated users array
+            const saveSimulatedUsers = (users) => {
+                localStorage.setItem('simulated_users', JSON.stringify(users));
+            };
+
+            // Seed default requested user
+            const seedUsers = getSimulatedUsers();
+            if (!seedUsers.some(u => u.email.toLowerCase() === "hashmaskp@gmail.com")) {
+                seedUsers.push({
+                    email: "hashmaskp@gmail.com",
+                    password: "konashmakp",
+                    approved: false,
+                    createdAt: Date.now()
+                });
+                saveSimulatedUsers(seedUsers);
+            }
+
+            // Session Listener
+            const checkSession = () => {
+                if (useSimulation) {
+                    const sessionUser = sessionStorage.getItem('simulated_user');
+                    if (sessionUser) {
+                        const users = getSimulatedUsers();
+                        const user = users.find(u => u.email === sessionUser);
+                        if (user && user.approved) {
+                            unlockSandbox();
+                        } else if (user) {
+                            showPendingState(user.email);
+                        } else {
+                            sessionStorage.removeItem('simulated_user');
+                            lockSandbox();
+                        }
+                    } else {
+                        lockSandbox();
+                    }
+                } else {
+                    auth.onAuthStateChanged((user) => {
+                        if (user) {
+                            // Check Firestore document
+                            db.collection('users').doc(user.uid).get()
+                                .then((doc) => {
+                                    if (doc.exists) {
+                                        const userData = doc.data();
+                                        if (userData.approved) {
+                                            unlockSandbox();
+                                        } else {
+                                            showPendingState(user.email);
+                                        }
+                                    } else {
+                                        // Document not found, create one as pending
+                                        db.collection('users').doc(user.uid).set({
+                                            email: user.email,
+                                            approved: false,
+                                            createdAt: Date.now()
+                                        }).then(() => {
+                                            showPendingState(user.email);
+                                        });
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.error("Error reading user approval status:", err);
+                                    showMessage("Database verification error. Please try again.", "error");
+                                });
+                        } else {
+                            lockSandbox();
+                        }
+                    });
+                }
+            };
+
+            const unlockSandbox = () => {
+                hideMessage();
+                lockScreenGate.style.display = 'none';
+                toolsWorkspace.style.display = 'block';
+                if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Lock Sandbox';
+                // Trigger scroll animation check if defined in global scripts
+                if (typeof window.animateOnScrollInit === 'function') {
+                    window.animateOnScrollInit();
+                }
+            };
+
+            const lockSandbox = () => {
+                toolsWorkspace.style.display = 'none';
+                lockScreenGate.style.display = 'flex';
+                if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-lock"></i> Login / Register';
+                // Restore form
+                lockForm.style.display = 'block';
+                document.querySelector('.lock-subtitle').style.display = 'block';
+                lockIcon.className = 'fa-solid fa-lock';
+                lockIcon.classList.remove('fa-pulse');
+            };
+
+            const showPendingState = (email) => {
+                lockForm.style.display = 'none';
+                document.querySelector('.lock-subtitle').style.display = 'none';
+                lockIcon.className = 'fa-solid fa-clock-rotate-left fa-pulse';
+                if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i> Pending Request';
+                showMessage(`Welcome back! Your request for "${email}" is still pending approval.`, "pending");
+                
+                // Add a Log Out button if it doesn't exist
+                let logoutBtn = document.getElementById('pendingLogoutBtn');
+                if (!logoutBtn) {
+                    logoutBtn = document.createElement('button');
+                    logoutBtn.id = 'pendingLogoutBtn';
+                    logoutBtn.className = 'gate-btn secondary';
+                    logoutBtn.style.marginTop = '20px';
+                    logoutBtn.style.width = '100%';
+                    logoutBtn.innerText = 'Back to Sign In / Cancel';
+                    logoutBtn.addEventListener('click', handleSignOut);
+                    document.querySelector('.lock-card').appendChild(logoutBtn);
+                } else {
+                    logoutBtn.style.display = 'block';
+                }
+            };
+
+            const handleSignOut = () => {
+                if (useSimulation) {
+                    sessionStorage.removeItem('simulated_user');
+                    const logoutBtn = document.getElementById('pendingLogoutBtn');
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    lockSandbox();
+                } else {
+                    auth.signOut().then(() => {
+                        const logoutBtn = document.getElementById('pendingLogoutBtn');
+                        if (logoutBtn) logoutBtn.style.display = 'none';
+                        lockSandbox();
+                    });
+                }
+            };
+
+            // Sign Up (Request Access) Action
+            btnRequestAccess.addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = gateEmail.value.trim();
+                const password = gatePassword.value;
+
+                if (!email || !password) {
+                    showMessage("Please fill out both email and password.", "error");
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage("Password must be at least 6 characters.", "error");
+                    return;
+                }
+
+                if (useSimulation) {
+                    const users = getSimulatedUsers();
+                    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                        showMessage("This email has already requested access.", "error");
+                        return;
+                    }
+                    users.push({
+                        email: email,
+                        password: password,
+                        approved: false,
+                        createdAt: Date.now()
+                    });
+                    saveSimulatedUsers(users);
+                    sessionStorage.setItem('simulated_user', email);
+                    showPendingState(email);
+                } else {
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            const user = userCredential.user;
+                            return db.collection('users').doc(user.uid).set({
+                                email: email,
+                                approved: false,
+                                createdAt: Date.now()
+                            });
+                        })
+                        .then(() => {
+                            showPendingState(email);
+                        })
+                        .catch((error) => {
+                            console.error("Sign up error:", error);
+                            showMessage(error.message, "error");
+                        });
+                }
+            });
+
+            // Sign In Action
+            lockForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = gateEmail.value.trim();
+                const password = gatePassword.value;
+
+                if (!email || !password) {
+                    showMessage("Please enter your email and password.", "error");
+                    return;
+                }
+
+                if (useSimulation) {
+                    const users = getSimulatedUsers();
+                    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+                    if (user) {
+                        sessionStorage.setItem('simulated_user', email);
+                        if (user.approved) {
+                            unlockSandbox();
+                        } else {
+                            showPendingState(email);
+                        }
+                    } else {
+                        showMessage("Access Denied. Incorrect email or password.", "error");
+                    }
+                } else {
+                    auth.signInWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            const user = userCredential.user;
+                            return db.collection('users').doc(user.uid).get();
+                        })
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const userData = doc.data();
+                                if (userData.approved) {
+                                    unlockSandbox();
+                                } else {
+                                    showPendingState(doc.data().email);
+                                }
+                            } else {
+                                showMessage("User profile not found in database.", "error");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Login error:", error);
+                            showMessage("Invalid credentials or access rejected.", "error");
+                        });
+                }
+            });
+
+            // ------------------------------------------
+            // Admin Panel Module
+            // ------------------------------------------
+            const toggleAdminDrawer = (show) => {
+                adminApprovalsPanel.style.display = show ? 'block' : 'none';
+                if (show) {
+                    loadAdminUsersList();
+                }
+            };
+
+            triggerAdminPanel.addEventListener('click', () => {
+                const passcode = prompt("Enter Admin Secret Key:");
+                if (passcode === "sinan123") {
+                    toggleAdminDrawer(true);
+                } else if (passcode !== null) {
+                    alert("Unauthorized access key!");
+                }
+            });
+
+            closeAdminBtn.addEventListener('click', () => toggleAdminDrawer(false));
+            adminBackdrop.addEventListener('click', () => toggleAdminDrawer(false));
+
+            const loadAdminUsersList = () => {
+                userRequestsList.innerHTML = '';
+                adminLoading.style.display = 'block';
+
+                if (useSimulation) {
+                    const users = getSimulatedUsers();
+                    adminLoading.style.display = 'none';
+                    if (users.length === 0) {
+                        userRequestsList.innerHTML = '<li class="empty-list-msg">No access requests submitted yet.</li>';
+                        return;
+                    }
+                    users.forEach((user, index) => {
+                        renderAdminUserItem(user.email, user.approved, (newStatus) => {
+                            users[index].approved = newStatus;
+                            saveSimulatedUsers(users);
+                            loadAdminUsersList();
+                            // Re-verify active user's visibility
+                            checkSession();
+                        });
+                    });
+                } else {
+                    db.collection('users').orderBy('createdAt', 'desc').get()
+                        .then((querySnapshot) => {
+                            adminLoading.style.display = 'none';
+                            if (querySnapshot.empty) {
+                                userRequestsList.innerHTML = '<li class="empty-list-msg">No registration request records found.</li>';
+                                return;
+                            }
+                            querySnapshot.forEach((doc) => {
+                                const userData = doc.data();
+                                renderAdminUserItem(userData.email, userData.approved, (newStatus) => {
+                                    db.collection('users').doc(doc.id).update({
+                                        approved: newStatus
+                                    }).then(() => {
+                                        loadAdminUsersList();
+                                        checkSession();
+                                    });
+                                });
+                            });
+                        })
+                        .catch((err) => {
+                            console.error("Error loading user records:", err);
+                            adminLoading.style.display = 'none';
+                            userRequestsList.innerHTML = '<li class="error-list-msg">Failed to query Firestore data.</li>';
+                        });
+                }
+            };
+
+            const renderAdminUserItem = (email, approved, onToggle) => {
+                const li = document.createElement('li');
+                li.className = 'user-request-item';
+                
+                const emailSpan = document.createElement('span');
+                emailSpan.className = 'user-email';
+                emailSpan.innerText = email;
+
+                const statusSpan = document.createElement('span');
+                statusSpan.className = `user-status ${approved ? 'status-approved' : 'status-pending'}`;
+                statusSpan.innerText = approved ? 'Approved' : 'Pending';
+
+                const actionBtn = document.createElement('button');
+                actionBtn.className = `admin-action-btn ${approved ? 'btn-revoke' : 'btn-approve'}`;
+                actionBtn.innerText = approved ? 'Revoke' : 'Approve';
+                actionBtn.addEventListener('click', () => {
+                    onToggle(!approved);
+                });
+
+                li.appendChild(emailSpan);
+                li.appendChild(statusSpan);
+                li.appendChild(actionBtn);
+                userRequestsList.appendChild(li);
+            };
+
+            // Side menu drawer toggle events
+            if (drawerLoginToggle) {
+                drawerLoginToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Hide side menu drawer
+                    const navMenu = document.getElementById('navMenu');
+                    const menuToggle = document.getElementById('menuToggle');
+                    if (navMenu) navMenu.classList.remove('active');
+                    if (menuToggle) menuToggle.classList.remove('active');
+
+                    const sessionUser = useSimulation ? sessionStorage.getItem('simulated_user') : (auth && auth.currentUser);
+                    if (sessionUser) {
+                        handleSignOut();
+                        showMessage("Sandbox locked successfully.", "success");
+                    } else {
+                        // Scroll to or focus on the gate
+                        lockScreenGate.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            }
+
+            if (drawerAdminToggle) {
+                drawerAdminToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Hide side menu drawer
+                    const navMenu = document.getElementById('navMenu');
+                    const menuToggle = document.getElementById('menuToggle');
+                    if (navMenu) navMenu.classList.remove('active');
+                    if (menuToggle) menuToggle.classList.remove('active');
+
+                    const passcode = prompt("Enter Admin Secret Key:");
+                    if (passcode === "sinan123") {
+                        toggleAdminDrawer(true);
+                    } else if (passcode !== null) {
+                        alert("Unauthorized access key!");
+                    }
+                });
+            }
+
+            // Window hash admin auto-trigger
+            if (window.location.hash === '#admin') {
+                history.replaceState(null, null, ' '); // clear hash
+                setTimeout(() => {
+                    const passcode = prompt("Enter Admin Secret Key:");
+                    if (passcode === "sinan123") {
+                        toggleAdminDrawer(true);
+                    } else if (passcode !== null) {
+                        alert("Unauthorized access key!");
+                    }
+                }, 300);
+            }
+
+            // Run session validation on initialization
+            checkSession();
+        });
+    </script>
+
+    <!-- Core App Interactive Script -->
+    <script src="app.js"></script>
+</body>
+</html>

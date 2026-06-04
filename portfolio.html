@@ -67,20 +67,28 @@
         <div class="header-container">
             <a href="index.html" class="back-logo" style="font-size: 0.95rem; font-weight: 500; font-family: 'Inter', sans-serif; color: #9ca3af; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;"><i class="fa-solid fa-arrow-left" style="font-size: 0.9rem; color: #9ca3af; transition: transform 0.3s ease;"></i> BACK</a>
             
-            <nav class="nav-menu" id="navMenu">
+            <!-- Horizontal Menu Bar (Visible ONLY on Desktop) -->
+            <nav class="portfolio-horizontal-menu">
                 <ul>
                     <li><a href="index.html" class="nav-link">Home</a></li>
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#services" class="nav-link">Services</a></li>
                     <li><a href="#portfolio" class="nav-link active">Portfolio</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                    <li class="mobile-nav-btn-wrapper" style="display: none;"><a href="#contact" class="nav-btn mobile-nav-btn">Hire Me</a></li>
+                    <li><a href="#contact" class="nav-link">Hire Me</a></li>
+                </ul>
+            </nav>
+
+            <nav class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="tools.html" class="nav-link">Tools</a></li>
+                    <li><a href="tools.html" class="nav-link"><i class="fa-solid fa-lock"></i> Login</a></li>
+                    <li><a href="tools.html#admin" class="nav-link"><i class="fa-solid fa-user-shield"></i> Admin Panel</a></li>
                 </ul>
             </nav>
 
             <div class="nav-actions">
-                <a href="#contact" class="nav-btn">Hire Me</a>
-                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                <button class="desktop-menu-toggle" id="menuToggle" aria-label="Toggle Menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -136,7 +144,7 @@
             <div class="section-container">
                 <div class="section-header align-center">
                     <span class="subtitle">About Me</span>
-                    <h2>Who is Sinan?</h2>
+                    <h2>Who am I ?</h2>
                     <div class="section-underline"></div>
                 </div>
 

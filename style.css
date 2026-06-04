@@ -2045,77 +2045,72 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Force Slide-out Menu styling for Desktop view on landing page */
-.landing-page .nav-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 380px;
-    height: 100vh;
-    background: rgba(13, 16, 23, 0.45);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
-    padding: 140px 60px;
-    z-index: 100;
-    transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    display: block !important;
+/* Global Desktop Slide-out Drawer Menu styling */
+@media (min-width: 992px) {
+    .nav-menu {
+        position: fixed !important;
+        top: 0 !important;
+        right: -100% !important;
+        width: 300px !important;
+        height: 100vh !important;
+        background: rgba(13, 16, 23, 0.85) !important;
+        border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5) !important;
+        padding: 120px 40px !important;
+        z-index: 100 !important;
+        transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        backdrop-filter: blur(25px) !important;
+        -webkit-backdrop-filter: blur(25px) !important;
+        display: block !important;
+    }
+    
+    .nav-menu.active {
+        right: 0 !important;
+    }
+    
+    .nav-menu ul {
+        flex-direction: column !important;
+        gap: 24px !important;
+    }
+    
+    .nav-menu .nav-link {
+        font-family: var(--font-heading) !important;
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
+        color: var(--text-secondary) !important;
+        transition: var(--transition-fast) !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .nav-menu .nav-link:hover {
+        color: #ffffff !important;
+        padding-left: 10px !important;
+        text-shadow: 0 0 15px var(--accent-glow) !important;
+    }
+    
+    .nav-menu .nav-link::after {
+        display: none !important; /* remove underline for desktop drawer list */
+    }
+    
+    /* Staggered entry transitions for menu links when active */
+    .nav-menu ul li {
+        transform: translateX(40px) !important;
+        opacity: 0 !important;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease !important;
+    }
+    
+    .nav-menu.active ul li {
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+    }
+    
+    .nav-menu.active ul li:nth-child(1) { transition-delay: 0.12s !important; }
+    .nav-menu.active ul li:nth-child(2) { transition-delay: 0.19s !important; }
+    .nav-menu.active ul li:nth-child(3) { transition-delay: 0.26s !important; }
+    .nav-menu.active ul li:nth-child(4) { transition-delay: 0.33s !important; }
+    .nav-menu.active ul li:nth-child(5) { transition-delay: 0.40s !important; }
+    .nav-menu.active ul li:nth-child(6) { transition-delay: 0.47s !important; }
 }
-
-.landing-page .nav-menu.active {
-    right: 0;
-}
-
-.landing-page .nav-menu ul {
-    flex-direction: column;
-    gap: 40px;
-}
-
-.landing-page .nav-menu .nav-link {
-    font-family: var(--font-heading);
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-secondary);
-    transition: var(--transition-fast);
-}
-
-.landing-page .nav-menu .nav-link:hover {
-    color: #ffffff;
-    padding-left: 10px;
-    text-shadow: 0 0 15px var(--accent-glow);
-}
-
-.landing-page .nav-menu .nav-link::after {
-    display: none; /* remove underline for desktop drawer list */
-}
-
-/* Style the dummy link differently to show it is for aesthetics */
-.landing-page .nav-menu .dummy-link {
-    opacity: 0.5;
-    font-weight: 400;
-    cursor: default;
-}
-.landing-page .nav-menu .dummy-link:hover {
-    color: var(--text-secondary) !important;
-    padding-left: 0 !important;
-    text-shadow: none !important;
-}
-
-/* Staggered entry transitions for menu links when active */
-.landing-page .nav-menu ul li {
-    transform: translateX(40px);
-    opacity: 0;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
-}
-
-.landing-page .nav-menu.active ul li {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.landing-page .nav-menu.active ul li:nth-child(1) { transition-delay: 0.15s; }
-.landing-page .nav-menu.active ul li:nth-child(2) { transition-delay: 0.25s; }
-.landing-page .nav-menu.active ul li:nth-child(3) { transition-delay: 0.35s; }
 
 @media (max-width: 480px) {
     .landing-page .nav-menu {
@@ -2251,4 +2246,750 @@ body.page-leaving .transition-loader {
     display: none;
 }
 
+/* ==========================================
+   Tools Page Mini-Folders & OS Modal Layout
+   ========================================== */
 
+/* Mini-Folder Grid Override */
+.tools-directory {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 40px 30px !important;
+    margin-bottom: 80px !important;
+    padding-top: 20px !important;
+}
+
+/* Compact Folder Card Shape */
+.tools-directory .folder-card {
+    margin-top: 30px !important;
+    cursor: pointer !important;
+    min-height: 240px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    border-radius: 0 16px 16px 16px !important;
+    background: rgba(13, 16, 23, 0.25) !important;
+    border: 1px solid var(--glass-border) !important;
+    position: relative !important;
+    transition: var(--transition-smooth) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.tools-directory .folder-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(var(--accent-rgb), 0.3) !important;
+    box-shadow: 0 15px 35px rgba(var(--accent-rgb), 0.15) !important;
+}
+
+/* Folder Top Tab styling */
+.tools-directory .folder-tab {
+    transition: var(--transition-smooth) !important;
+}
+.tools-directory .folder-card:hover .folder-tab {
+    background: rgba(13, 16, 23, 0.6) !important;
+    border-color: rgba(var(--accent-rgb), 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Folder Summary Items */
+.folder-summary {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 10px 0 !important;
+    gap: 0 !important;
+}
+
+.folder-icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    transition: var(--transition-smooth);
+}
+
+/* Folder Circle Color Presets */
+.folder-icon-circle.accent-teal {
+    background: rgba(0, 173, 181, 0.08);
+    color: #00adb5;
+    border: 1px solid rgba(0, 173, 181, 0.15);
+}
+.folder-icon-circle.accent-purple {
+    background: rgba(138, 43, 226, 0.08);
+    color: #8a2be2;
+    border: 1px solid rgba(138, 43, 226, 0.15);
+}
+.folder-icon-circle.accent-orange {
+    background: rgba(245, 158, 11, 0.08);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+.folder-icon-circle.accent-emerald {
+    background: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.folder-card:hover .folder-icon-circle {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.folder-summary h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+}
+
+.folder-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+    max-width: 220px;
+    min-height: 38px;
+}
+
+.folder-meta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.folder-card .open-folder-btn {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    padding: 8px 18px !important;
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: var(--transition-fast) !important;
+    margin-top: auto;
+}
+
+.folder-card:hover .open-folder-btn {
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px var(--accent-glow) !important;
+}
+
+/* Hide workspace folder-content on directory list page */
+.folder-card .folder-content {
+    display: none !important;
+}
+
+/* Workspace OS-Style Modal Window */
+.tool-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tool-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.tool-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 4, 7, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transition: inherit;
+}
+
+.tool-modal-window {
+    background: rgba(13, 16, 23, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 850px;
+    height: 80vh;
+    max-height: 650px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    transform: scale(0.93) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease, height 0.3s ease;
+    z-index: 1010;
+}
+
+.tool-modal.active .tool-modal-window {
+    transform: scale(1) translateY(0);
+}
+
+/* Maximize OS Window State */
+.tool-modal-window.maximized {
+    max-width: 96% !important;
+    max-height: 94% !important;
+    width: 96vw !important;
+    height: 94vh !important;
+    border-radius: 12px !important;
+}
+
+/* OS Window Title Bar Header */
+.tool-modal-header {
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: filter 0.2s ease;
+}
+.window-dot:hover {
+    filter: brightness(1.2);
+}
+
+.window-dot.close {
+    background: #ef4444;
+}
+.window-dot.minimize {
+    background: #f59e0b;
+}
+.window-dot.maximize {
+    background: #10b981;
+}
+
+.window-path {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: lowercase;
+}
+
+/* Workspace Inner Scroll Area */
+.tool-modal-body {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Render active layout inside modal body */
+.tool-modal-body .folder-content {
+    display: block !important;
+    opacity: 1 !important;
+    max-height: none !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Disable body scroll lock overlay rules */
+body.modal-open {
+    overflow: hidden !important;
+}
+
+/* Homepage Landing CTAs Layout Adjustments (supports three buttons) */
+.landing-actions {
+    display: flex !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+    margin-top: 30px !important;
+}
+@media (max-width: 640px) {
+    .landing-actions {
+        justify-content: center !important;
+    }
+}
+
+/* Responsive Modal Styling for small mobile devices */
+@media (max-width: 640px) {
+    .tool-modal-window {
+        width: 100% !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .tool-modal.active .tool-modal-window {
+        transform: translateY(0) !important;
+    }
+    .tool-modal-body {
+        padding: 24px 16px !important;
+    }
+    
+    .tools-directory {
+        grid-template-columns: 1fr !important;
+        gap: 30px 0 !important;
+    }
+}
+/* Portfolio Page Horizontal Top Center Menu */
+.portfolio-horizontal-menu {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .portfolio-horizontal-menu {
+        display: block !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 5 !important;
+    }
+    
+    .portfolio-horizontal-menu ul {
+        display: flex !important;
+        gap: 32px !important;
+        align-items: center !important;
+        list-style: none !important;
+    }
+    
+    .portfolio-horizontal-menu .nav-link {
+        font-family: var(--font-primary) !important;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        color: var(--text-secondary) !important;
+        position: relative !important;
+        padding: 8px 0 !important;
+        transition: var(--transition-fast) !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+    }
+    
+    .portfolio-horizontal-menu .nav-link:hover,
+    .portfolio-horizontal-menu .nav-link.active {
+        color: var(--text-primary) !important;
+    }
+    
+    .portfolio-horizontal-menu .nav-link::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 0 !important;
+        height: 2px !important;
+        background: var(--accent-color) !important;
+        box-shadow: 0 0 8px var(--accent-glow) !important;
+        transition: var(--transition-fast) !important;
+    }
+    
+    .portfolio-horizontal-menu .nav-link:hover::after,
+    .portfolio-horizontal-menu .nav-link.active::after {
+        width: 100% !important;
+    }
+}
+
+/* ==========================================
+   Tools Page Lock Screen Gate & Admin Panel
+   ========================================== */
+
+.lock-screen-gate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 40px 20px;
+    z-index: 100;
+}
+
+.lock-card {
+    background: rgba(13, 16, 23, 0.45);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--border-radius-lg);
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.lock-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.1);
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.15);
+}
+
+.lock-card h2 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.lock-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* Feedback alerts inside gate */
+.lock-message {
+    padding: 12px 16px;
+    border-radius: var(--border-radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    animation: slideUp 0.3s ease;
+}
+
+.lock-message.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.lock-message.pending {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.lock-message.success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.lock-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lock-form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.gate-btn {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.gate-btn.primary {
+    background: var(--accent-color);
+    color: #ffffff;
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.gate-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.4);
+}
+
+.gate-btn.secondary {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+.gate-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.admin-trigger-area {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+}
+
+#triggerAdminPanel {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#triggerAdminPanel:hover {
+    color: var(--accent-color);
+}
+
+/* Simulation badge */
+.simulation-badge {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Admin Approvals Drawer / Window */
+.admin-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2000;
+}
+
+.admin-panel-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 4, 7, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.admin-panel-window {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    max-width: 460px;
+    height: 100%;
+    background: rgba(13, 16, 23, 0.85);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -20px 0 50px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    display: flex;
+    flex-direction: column;
+    animation: slideLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.admin-panel-header {
+    padding: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-panel-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-color);
+}
+
+.close-admin {
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.close-admin:hover {
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+.admin-panel-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-help {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.admin-loading {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 30px 0;
+}
+
+.user-requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+}
+
+.user-request-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: var(--transition-fast);
+}
+
+.user-request-item:hover {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.user-email {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.user-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+}
+
+.user-status.status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+}
+
+.user-status.status-approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+
+.admin-action-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition-fast);
+}
+
+.admin-action-btn.btn-approve {
+    background: var(--accent-color);
+    color: #ffffff;
+}
+
+.admin-action-btn.btn-approve:hover {
+    box-shadow: 0 4px 10px var(--accent-glow);
+}
+
+.admin-action-btn.btn-revoke {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.admin-action-btn.btn-revoke:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.empty-list-msg, .error-list-msg {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 40px 20px;
+}
+
+/* Shake Keyframe animation for incorrect entries */
+.shake {
+    animation: shakeAnim 0.5s ease-in-out;
+}
+
+@keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}

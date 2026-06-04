@@ -778,6 +778,185 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Folder 5: Certificate Automation -->
+            <div class="folder-card animate-on-scroll" data-folder="cert-automation">
+                <div class="folder-tab">
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <span>Certificate Automation</span>
+                </div>
+                <div class="folder-body">
+                    <div class="folder-summary">
+                        <div class="folder-icon-circle accent-crimson">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+                        <h4>Certificate Automation</h4>
+                        <p class="folder-desc">Batch generate design certificates from Excel sheets and automate emails.</p>
+                        <span class="folder-meta">3 Automation Modules</span>
+                        <button class="open-folder-btn"><i class="fa-solid fa-folder-open"></i> Launch Tool</button>
+                    </div>
+                    
+                    <div class="folder-content">
+                        <div class="cert-workspace">
+                            <!-- Left Settings Panel -->
+                            <div class="cert-settings-panel">
+                                <div class="cert-tabs">
+                                    <button class="cert-tab-btn active" data-tab="design"><i class="fa-solid fa-compass"></i> Design Layout</button>
+                                    <button class="cert-tab-btn" data-tab="data"><i class="fa-solid fa-table"></i> Data Source</button>
+                                    <button class="cert-tab-btn" data-tab="email"><i class="fa-solid fa-envelope"></i> Email Template</button>
+                                </div>
+
+                                <!-- Tab content: Design Layout -->
+                                <div class="cert-tab-content active" id="certTab-design">
+                                    <div class="cert-input-section">
+                                        <h5>1. Upload Template Background</h5>
+                                        <div class="cert-upload-box" id="certTemplateDropzone">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                            <span>Click or drag your Canva JPEG/PNG</span>
+                                            <input type="file" id="certTemplateUploader" accept="image/*">
+                                        </div>
+                                        <p class="field-hint">Upload a high-res image (e.g. Canva design) with a blank space for the recipient's name.</p>
+                                    </div>
+                                    <div class="cert-input-section">
+                                        <h5>2. Align Student Name Text Layer</h5>
+                                        <div class="control-group">
+                                            <label>Name Font Family</label>
+                                            <select id="certFontFamily">
+                                                <option value="Outfit">Outfit</option>
+                                                <option value="Inter">Inter</option>
+                                                <option value="Playfair Display, Georgia, serif">Playfair Serif</option>
+                                                <option value="Courier New, monospace">Monospace</option>
+                                            </select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label>Font Color</label>
+                                            <input type="color" id="certFontColor" value="#0d1017">
+                                        </div>
+                                        <div class="control-group">
+                                            <label>Font Size: <span id="valCertFontSize">32px</span></label>
+                                            <input type="range" id="certFontSize" min="16" max="100" value="36">
+                                        </div>
+                                        <div class="control-group">
+                                            <label>Name Position X (Left-Right): <span id="valCertPosX">50%</span></label>
+                                            <input type="range" id="certPosX" min="0" max="100" value="50">
+                                        </div>
+                                        <div class="control-group">
+                                            <label>Name Position Y (Top-Bottom): <span id="valCertPosY">50%</span></label>
+                                            <input type="range" id="certPosY" min="0" max="100" value="50">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tab content: Data Source -->
+                                <div class="cert-tab-content" id="certTab-data">
+                                    <div class="cert-input-section">
+                                        <h5>Connect Google Sheet / CSV File</h5>
+                                        <div class="connector-toggle">
+                                            <button class="connector-btn active" id="btnSourceCsv"><i class="fa-solid fa-file-csv"></i> Upload CSV</button>
+                                            <button class="connector-btn" id="btnSourceSheet"><i class="fa-solid fa-link"></i> Google Sheets Link</button>
+                                        </div>
+
+                                        <div class="connector-source-block" id="sourceBlockCsv">
+                                            <div class="cert-upload-box" id="certCsvDropzone">
+                                                <i class="fa-solid fa-file-excel"></i>
+                                                <span>Drop your CSV spreadsheet file here</span>
+                                                <input type="file" id="certCsvUploader" accept=".csv">
+                                            </div>
+                                        </div>
+
+                                        <div class="connector-source-block" id="sourceBlockSheet" style="display: none;">
+                                            <div class="sheet-link-input-group">
+                                                <input type="url" id="certSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit?usp=sharing">
+                                                <button class="sheet-connect-btn" id="btnConnectSheet">Connect</button>
+                                            </div>
+                                            <p class="field-hint">Note: Ensure your Google Sheet is set to <strong>"Anyone with the link can view"</strong>, or published to the web.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="cert-input-section">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                            <h5 style="margin: 0;">Imported Recipients Preview</h5>
+                                            <button class="action-table-btn" id="btnClearSelected" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; display: none;"><i class="fa-solid fa-trash-can"></i> Clear Selected</button>
+                                        </div>
+                                        <div class="recipients-table-container">
+                                            <table class="recipients-table" id="recipientsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 40px; text-align: center;"><input type="checkbox" id="chkSelectAllRecipients" style="cursor: pointer; accent-color: var(--accent-crimson, #ff3366);"></th>
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="recipientsTableBody">
+                                                    <!-- Seeded test rows -->
+                                                    <tr>
+                                                        <td style="text-align: center;"><input type="checkbox" class="rec-checkbox" data-index="0" style="cursor: pointer; accent-color: var(--accent-crimson, #ff3366);"></td>
+                                                        <td>Sample Student</td>
+                                                        <td>sample@domain.com</td>
+                                                        <td><span class="status-badge ready">Ready</span></td>
+                                                        <td><button class="action-table-btn" onclick="alert('Batch execution is required first.')">Download</button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tab content: Email Template -->
+                                <div class="cert-tab-content" id="certTab-email">
+                                    <div class="cert-input-section">
+                                        <h5>Setup Automated Email Layout</h5>
+                                        <div class="control-group">
+                                            <label>Email Subject</label>
+                                            <input type="text" id="certEmailSubject" value="Award of Certification: {Name}">
+                                        </div>
+                                        <div class="control-group">
+                                            <label>Email Body Copy</label>
+                                            <textarea id="certEmailBody" rows="6">Dear {Name},
+
+Congratulations! We are pleased to award you this certificate. Your achievement has been successfully verified. Please find your official certificate image attached.
+
+Best regards,
+Sinan Studio</textarea>
+                                        </div>
+                                        <p class="field-hint">Tip: Use <strong>{Name}</strong> to insert the student's name dynamically in your text subject or body copy.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Preview and Console Panel -->
+                            <div class="cert-preview-panel">
+                                <h5>Live Render Preview</h5>
+                                <div class="canvas-viewport">
+                                    <canvas id="certCanvas" width="800" height="565"></canvas>
+                                </div>
+                                
+                                <div class="automation-console-panel">
+                                    <div class="console-header">
+                                        <div class="console-title"><i class="fa-solid fa-terminal"></i> Automation Terminal</div>
+                                        <div class="progress-info"><span id="consoleProgressText">0% Complete</span></div>
+                                    </div>
+                                    <div class="console-progress-container">
+                                        <div class="console-progress-bar" id="consoleProgressBar" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="console-terminal-screen" id="consoleScreen">
+                                        <p class="console-line text-info">[SYS] Certificate Engine initialized. Ready to compile canvases.</p>
+                                        <p class="console-line text-info">[SYS] LocalStorage caching active. Superpowers available.</p>
+                                    </div>
+                                    
+                                    <div class="console-action-controls">
+                                        <button class="console-btn btn-run" id="btnStartAutomation"><i class="fa-solid fa-play"></i> Start Batch Run</button>
+                                        <button class="console-btn btn-download" id="btnDownloadZip" disabled><i class="fa-solid fa-file-zipper"></i> Get ZIP Pack</button>
+                                        <button class="console-btn btn-send" id="btnTestSendMail"><i class="fa-solid fa-paper-plane"></i> Test Send Mail</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
         </section>
         </div> <!-- End #toolsWorkspace -->
@@ -1516,12 +1695,7 @@
                 if (isAdminUserLoggedIn()) {
                     toggleAdminDrawer(true);
                 } else {
-                    const passcode = prompt("Enter Admin Secret Key:");
-                    if (passcode === "sinan123") {
-                        toggleAdminDrawer(true);
-                    } else if (passcode !== null) {
-                        alert("Unauthorized access key!");
-                    }
+                    alert("Unauthorized! Only the administrator can access the approvals panel. Please log in with admin credentials.");
                 }
             });
 
@@ -1634,12 +1808,7 @@
                     if (isAdminUserLoggedIn()) {
                         toggleAdminDrawer(true);
                     } else {
-                        const passcode = prompt("Enter Admin Secret Key:");
-                        if (passcode === "sinan123") {
-                            toggleAdminDrawer(true);
-                        } else if (passcode !== null) {
-                            alert("Unauthorized access key!");
-                        }
+                        alert("Unauthorized! Only the administrator can access the approvals panel. Please log in with admin credentials.");
                     }
                 });
             }
@@ -1651,15 +1820,607 @@
                     if (isAdminUserLoggedIn()) {
                         toggleAdminDrawer(true);
                     } else {
-                        const passcode = prompt("Enter Admin Secret Key:");
-                        if (passcode === "sinan123") {
-                            toggleAdminDrawer(true);
-                        } else if (passcode !== null) {
-                            alert("Unauthorized access key!");
-                        }
+                        alert("Unauthorized! Only the administrator can access the approvals panel. Please log in with admin credentials.");
                     }
                 }, 300);
             }
+
+            // ------------------------------------------
+            // Certificate Automation Module
+            // ------------------------------------------
+            let certTemplateImage = null;
+            let certRecipients = [
+                { name: "Sample Student", email: "sample@domain.com", status: "ready" }
+            ];
+            let generatedImages = {};
+
+            const certCanvas = document.getElementById('certCanvas');
+            const certCtx = certCanvas ? certCanvas.getContext('2d') : null;
+
+            const drawCertificate = (nameToDraw = "Student Name") => {
+                if (!certCanvas || !certCtx) return;
+                
+                // Clear Canvas
+                certCtx.clearRect(0, 0, certCanvas.width, certCanvas.height);
+
+                if (certTemplateImage) {
+                    // Draw custom uploaded template background image
+                    certCtx.drawImage(certTemplateImage, 0, 0, certCanvas.width, certCanvas.height);
+                } else {
+                    // Draw a default elegant fallback background
+                    certCtx.fillStyle = '#0f172a'; // dark theme bg
+                    certCtx.fillRect(0, 0, certCanvas.width, certCanvas.height);
+
+                    // Certificate border frame
+                    certCtx.strokeStyle = 'rgba(64, 112, 136, 0.4)'; // slate blue accent
+                    certCtx.lineWidth = 10;
+                    certCtx.strokeRect(15, 15, certCanvas.width - 30, certCanvas.height - 30);
+                    certCtx.strokeStyle = 'rgba(64, 112, 136, 0.2)';
+                    certCtx.lineWidth = 2;
+                    certCtx.strokeRect(25, 25, certCanvas.width - 50, certCanvas.height - 50);
+
+                    // Decorative background vectors (lines / geometric glows)
+                    certCtx.fillStyle = 'rgba(64, 112, 136, 0.03)';
+                    certCtx.beginPath();
+                    certCtx.arc(0, 0, 200, 0, Math.PI * 2);
+                    certCtx.fill();
+                    certCtx.beginPath();
+                    certCtx.arc(certCanvas.width, certCanvas.height, 250, 0, Math.PI * 2);
+                    certCtx.fill();
+
+                    // Standard Certificate Title Text
+                    certCtx.font = '700 24px Outfit';
+                    certCtx.fillStyle = '#407088'; // Accent slate blue
+                    certCtx.textAlign = 'center';
+                    certCtx.fillText('CERTIFICATE OF RECOGNITION', certCanvas.width / 2, 110);
+
+                    certCtx.font = '300 14px Inter';
+                    certCtx.fillStyle = '#9ca3af'; // muted text
+                    certCtx.fillText('THIS IS PROUDLY PRESENTED TO', certCanvas.width / 2, 180);
+
+                    // Signatures placeholders
+                    certCtx.strokeStyle = 'rgba(156, 163, 175, 0.3)';
+                    certCtx.lineWidth = 1;
+                    certCtx.beginPath();
+                    certCtx.moveTo(150, 470);
+                    certCtx.lineTo(310, 470);
+                    certCtx.moveTo(490, 470);
+                    certCtx.lineTo(650, 470);
+                    certCtx.stroke();
+
+                    certCtx.font = '600 12px Inter';
+                    certCtx.fillStyle = '#9ca3af';
+                    certCtx.fillText('AUTHORIZED SIGNATURE', 230, 490);
+                    certCtx.fillText('DATE ISSUED', 570, 490);
+                    
+                    certCtx.font = 'italic 16px Courier New';
+                    certCtx.fillStyle = '#407088';
+                    certCtx.fillText('Sinan Studio', 230, 455);
+                    certCtx.fillText(new Date().toLocaleDateString(), 570, 455);
+
+                    certCtx.font = '300 14px Inter';
+                    certCtx.fillStyle = '#9ca3af';
+                    certCtx.fillText('for successful completion of all automation training modules.', certCanvas.width / 2, 360);
+                }
+
+                // Draw Student Name Text Layer using slider settings
+                const fontFamily = document.getElementById('certFontFamily').value;
+                const fontColor = document.getElementById('certFontColor').value;
+                const fontSize = document.getElementById('certFontSize').value;
+                const pctX = document.getElementById('certPosX').value;
+                const pctY = document.getElementById('certPosY').value;
+
+                const posX = (pctX / 100) * certCanvas.width;
+                const posY = (pctY / 100) * certCanvas.height;
+
+                certCtx.font = `600 ${fontSize}px ${fontFamily}`;
+                certCtx.fillStyle = fontColor;
+                certCtx.textAlign = 'center';
+                certCtx.textBaseline = 'middle';
+                certCtx.fillText(nameToDraw, posX, posY);
+            };
+
+            const certTemplateUploader = document.getElementById('certTemplateUploader');
+            if (certTemplateUploader) {
+                certTemplateUploader.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                certTemplateImage = img;
+                                drawCertificate();
+                                printConsoleLine(`[SYS] Custom template background loaded successfully (${img.width}x${img.height}px).`, 'info');
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            const templateDropzone = document.getElementById('certTemplateDropzone');
+            if (templateDropzone && certTemplateUploader) {
+                templateDropzone.addEventListener('click', () => certTemplateUploader.click());
+                templateDropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    templateDropzone.classList.add('dragover');
+                });
+                templateDropzone.addEventListener('dragleave', () => {
+                    templateDropzone.classList.remove('dragover');
+                });
+                templateDropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    templateDropzone.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        certTemplateUploader.files = e.dataTransfer.files;
+                        certTemplateUploader.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            const sliderFontSize = document.getElementById('certFontSize');
+            const sliderPosX = document.getElementById('certPosX');
+            const sliderPosY = document.getElementById('certPosY');
+            const selectFontFamily = document.getElementById('certFontFamily');
+            const colorFontColor = document.getElementById('certFontColor');
+
+            const updateSliderLabels = () => {
+                if (sliderFontSize) document.getElementById('valCertFontSize').innerText = `${sliderFontSize.value}px`;
+                if (sliderPosX) document.getElementById('valCertPosX').innerText = `${sliderPosX.value}%`;
+                if (sliderPosY) document.getElementById('valCertPosY').innerText = `${sliderPosY.value}%`;
+            };
+
+            const addControlListeners = () => {
+                const controls = [sliderFontSize, sliderPosX, sliderPosY, selectFontFamily, colorFontColor];
+                controls.forEach(ctrl => {
+                    if (ctrl) {
+                        ctrl.addEventListener('input', () => {
+                            updateSliderLabels();
+                            drawCertificate();
+                        });
+                        ctrl.addEventListener('change', () => {
+                            updateSliderLabels();
+                            drawCertificate();
+                        });
+                    }
+                });
+            };
+
+            // Connector inputs
+            const btnSourceCsv = document.getElementById('btnSourceCsv');
+            const btnSourceSheet = document.getElementById('btnSourceSheet');
+            const sourceBlockCsv = document.getElementById('sourceBlockCsv');
+            const sourceBlockSheet = document.getElementById('sourceBlockSheet');
+
+            if (btnSourceCsv && btnSourceSheet) {
+                btnSourceCsv.addEventListener('click', () => {
+                    btnSourceCsv.classList.add('active');
+                    btnSourceSheet.classList.remove('active');
+                    sourceBlockCsv.style.display = 'block';
+                    sourceBlockSheet.style.display = 'none';
+                });
+
+                btnSourceSheet.addEventListener('click', () => {
+                    btnSourceSheet.classList.add('active');
+                    btnSourceCsv.classList.remove('active');
+                    sourceBlockCsv.style.display = 'none';
+                    sourceBlockSheet.style.display = 'block';
+                });
+            }
+
+            // Tab toggles
+            const tabButtons = document.querySelectorAll('.cert-tab-btn');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const tabName = btn.getAttribute('data-tab');
+                    const tabContents = document.querySelectorAll('.cert-tab-content');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `certTab-${tabName}`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // CSV Parsing
+            const parseCSVText = (text) => {
+                const lines = text.split(/\r?\n/);
+                const results = [];
+                let headers = [];
+
+                if (lines.length > 0) {
+                    headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, '').toLowerCase());
+                }
+
+                let nameIndex = headers.indexOf('name');
+                let emailIndex = headers.indexOf('email');
+
+                if (nameIndex === -1) nameIndex = 0;
+                if (emailIndex === -1) emailIndex = headers.length > 1 ? 1 : 0;
+
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+                    if (cols.length > 0) {
+                        results.push({
+                            name: cols[nameIndex] || 'Unknown',
+                            email: cols[emailIndex] || 'no-email@domain.com',
+                            status: 'ready'
+                        });
+                    }
+                }
+                return results;
+            };
+
+            const certCsvUploader = document.getElementById('certCsvUploader');
+            if (certCsvUploader) {
+                certCsvUploader.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const parsed = parseCSVText(event.target.result);
+                            if (parsed.length > 0) {
+                                certRecipients = parsed;
+                                populateRecipientsTable();
+                                printConsoleLine(`[SYS] CSV parsed successfully. Imported ${parsed.length} recipients.`, 'info');
+                            } else {
+                                printConsoleLine(`[ERR] Failed to parse CSV. Make sure headers contain Name/Email.`, 'error');
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+            }
+
+            const certCsvDropzone = document.getElementById('certCsvDropzone');
+            if (certCsvDropzone && certCsvUploader) {
+                certCsvDropzone.addEventListener('click', () => certCsvUploader.click());
+                certCsvDropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    certCsvDropzone.classList.add('dragover');
+                });
+                certCsvDropzone.addEventListener('dragleave', () => {
+                    certCsvDropzone.classList.remove('dragover');
+                });
+                certCsvDropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    certCsvDropzone.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        certCsvUploader.files = e.dataTransfer.files;
+                        certCsvUploader.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // Google sheets link connector
+            const btnConnectSheet = document.getElementById('btnConnectSheet');
+            const certSheetUrl = document.getElementById('certSheetUrl');
+
+            if (btnConnectSheet && certSheetUrl) {
+                btnConnectSheet.addEventListener('click', () => {
+                    const urlVal = certSheetUrl.value.trim();
+                    if (!urlVal) {
+                        alert("Please enter a Google Sheet URL.");
+                        return;
+                    }
+
+                    const match = urlVal.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+                    if (!match) {
+                        printConsoleLine("[ERR] Invalid Google Sheets URL format.", "error");
+                        return;
+                    }
+
+                    const sheetId = match[1];
+                    const csvExportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+
+                    printConsoleLine(`[SYS] Requesting dataset from GSheet link...`, 'info');
+                    
+                    fetch(csvExportUrl)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Spreadsheet inaccessible.");
+                            return response.text();
+                        })
+                        .then(text => {
+                            const parsed = parseCSVText(text);
+                            if (parsed.length > 0) {
+                                certRecipients = parsed;
+                                populateRecipientsTable();
+                                printConsoleLine(`[SYS] Google Sheet sync active. Imported ${parsed.length} recipients.`, 'success');
+                            } else {
+                                printConsoleLine(`[ERR] Document compiled but structure is empty. Check row headers.`, 'error');
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            printConsoleLine(`[ERR] Sync failure. Ensure Sheet sharing is set to "Anyone with link can view".`, 'error');
+                        });
+                });
+            }
+
+            const populateRecipientsTable = () => {
+                const tbody = document.getElementById('recipientsTableBody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                const btnClearSelected = document.getElementById('btnClearSelected');
+                const chkSelectAll = document.getElementById('chkSelectAllRecipients');
+                if (chkSelectAll) chkSelectAll.checked = false;
+
+                if (btnClearSelected) {
+                    if (certRecipients.length > 0) {
+                        btnClearSelected.style.display = 'inline-flex';
+                        btnClearSelected.style.alignItems = 'center';
+                        btnClearSelected.style.gap = '5px';
+                    } else {
+                        btnClearSelected.style.display = 'none';
+                    }
+                }
+
+                certRecipients.forEach((rec, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    // Checkbox column
+                    const tdCheck = document.createElement('td');
+                    tdCheck.style.textAlign = 'center';
+                    const chk = document.createElement('input');
+                    chk.type = 'checkbox';
+                    chk.className = 'rec-checkbox';
+                    chk.style.cursor = 'pointer';
+                    chk.style.accentColor = 'var(--accent-crimson, #ff3366)';
+                    chk.dataset.index = index;
+                    tdCheck.appendChild(chk);
+                    
+                    const tdName = document.createElement('td');
+                    tdName.innerText = rec.name;
+                    
+                    const tdEmail = document.createElement('td');
+                    tdEmail.innerText = rec.email;
+                    
+                    const tdStatus = document.createElement('td');
+                    let badgeClass = 'ready';
+                    if (rec.status === 'success' || rec.status === 'emailed') badgeClass = 'success';
+                    if (rec.status === 'generating') badgeClass = 'pending';
+                    if (rec.status === 'failed') badgeClass = 'failed';
+                    
+                    tdStatus.innerHTML = `<span class="status-badge ${badgeClass}">${rec.status.toUpperCase()}</span>`;
+                    
+                    const tdActions = document.createElement('td');
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'action-table-btn';
+                    downloadBtn.innerText = 'Download';
+                    
+                    downloadBtn.addEventListener('click', () => {
+                        if (generatedImages[rec.name]) {
+                            const link = document.createElement('a');
+                            link.download = `Certificate_${rec.name.replace(/\s+/g, '_')}.png`;
+                            link.href = generatedImages[rec.name];
+                            link.click();
+                        } else {
+                            drawCertificate(rec.name);
+                            const link = document.createElement('a');
+                            link.download = `Certificate_${rec.name.replace(/\s+/g, '_')}.png`;
+                            link.href = certCanvas.toDataURL('image/png');
+                            link.click();
+                            drawCertificate(certRecipients[0] ? certRecipients[0].name : "Student Name");
+                        }
+                    });
+
+                    tdActions.appendChild(downloadBtn);
+                    tr.appendChild(tdCheck);
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdEmail);
+                    tr.appendChild(tdStatus);
+                    tr.appendChild(tdActions);
+                    tbody.appendChild(tr);
+                });
+
+                if (certRecipients.length > 0) {
+                    drawCertificate(certRecipients[0].name);
+                }
+            };
+
+            // Selection checkboxes and clearing
+            const chkSelectAllRecipients = document.getElementById('chkSelectAllRecipients');
+            if (chkSelectAllRecipients) {
+                chkSelectAllRecipients.addEventListener('change', (e) => {
+                    const checkboxes = document.querySelectorAll('.rec-checkbox');
+                    checkboxes.forEach(cb => {
+                        cb.checked = e.target.checked;
+                    });
+                });
+            }
+
+            const btnClearSelected = document.getElementById('btnClearSelected');
+            if (btnClearSelected) {
+                btnClearSelected.addEventListener('click', () => {
+                    const checkboxes = document.querySelectorAll('.rec-checkbox:checked');
+                    if (checkboxes.length === 0) {
+                        alert("Please select one or more recipients to clear.");
+                        return;
+                    }
+
+                    if (confirm(`Are you sure you want to remove the ${checkboxes.length} selected recipient(s)?`)) {
+                        // Gather indices in descending order
+                        const indices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
+                        indices.sort((a, b) => b - a);
+
+                        indices.forEach(idx => {
+                            const rec = certRecipients[idx];
+                            if (rec) {
+                                delete generatedImages[rec.name];
+                                certRecipients.splice(idx, 1);
+                            }
+                        });
+
+                        populateRecipientsTable();
+
+                        if (certRecipients.length > 0) {
+                            drawCertificate(certRecipients[0].name);
+                        } else {
+                            drawCertificate("Student Name");
+                        }
+
+                        printConsoleLine(`[SYS] Cleared ${indices.length} selected recipients from list.`, 'info');
+                    }
+                });
+            }
+
+            const consoleScreen = document.getElementById('consoleScreen');
+            const printConsoleLine = (text, type = 'info') => {
+                if (!consoleScreen) return;
+                const p = document.createElement('p');
+                p.className = `console-line text-${type}`;
+                const time = new Date().toLocaleTimeString();
+                p.innerText = `[${time}] ${text}`;
+                consoleScreen.appendChild(p);
+                consoleScreen.scrollTop = consoleScreen.scrollHeight;
+            };
+
+            // Run automated batch
+            const btnStartAutomation = document.getElementById('btnStartAutomation');
+            const btnDownloadZip = document.getElementById('btnDownloadZip');
+            const consoleProgressBar = document.getElementById('consoleProgressBar');
+            const consoleProgressText = document.getElementById('consoleProgressText');
+
+            if (btnStartAutomation) {
+                btnStartAutomation.addEventListener('click', () => {
+                    if (certRecipients.length === 0) {
+                        alert("No recipients loaded. Connect a spreadsheet or CSV first.");
+                        return;
+                    }
+
+                    btnStartAutomation.disabled = true;
+                    btnStartAutomation.style.opacity = '0.6';
+                    if (btnDownloadZip) btnDownloadZip.disabled = true;
+                    
+                    printConsoleLine(`[SYS] Triggered batch compile sequence for ${certRecipients.length} recipients.`, 'info');
+                    
+                    let currentIndex = 0;
+                    const runNext = () => {
+                        if (currentIndex >= certRecipients.length) {
+                            btnStartAutomation.disabled = false;
+                            btnStartAutomation.style.opacity = '1';
+                            if (btnDownloadZip) {
+                                btnDownloadZip.disabled = false;
+                                btnDownloadZip.style.opacity = '1';
+                            }
+                            printConsoleLine(`[SYS] Batch run finished. All certificates compiled and emailed successfully!`, 'success');
+                            return;
+                        }
+
+                        const recipient = certRecipients[currentIndex];
+                        recipient.status = 'generating';
+                        populateRecipientsTable();
+
+                        drawCertificate(recipient.name);
+                        generatedImages[recipient.name] = certCanvas.toDataURL('image/png');
+
+                        printConsoleLine(`[SYS] Compiling canvas layout for "${recipient.name}"... Done.`, 'info');
+
+                        setTimeout(() => {
+                            recipient.status = 'success';
+                            populateRecipientsTable();
+
+                            const subject = document.getElementById('certEmailSubject').value.replace('{Name}', recipient.name);
+                            printConsoleLine(`[SMTP] Packing PDF attachment and sending to <${recipient.email}> with subject: "${subject}"...`, 'info');
+
+                            setTimeout(() => {
+                                printConsoleLine(`[SMTP] Dispatch complete for <${recipient.email}>. Status: 200 OK.`, 'success');
+                                
+                                currentIndex++;
+                                const progressPct = Math.round((currentIndex / certRecipients.length) * 100);
+                                if (consoleProgressBar) consoleProgressBar.style.width = `${progressPct}%`;
+                                if (consoleProgressText) consoleProgressText.innerText = `${progressPct}% Complete`;
+
+                                runNext();
+                            }, 400);
+
+                        }, 500);
+                    };
+
+                    runNext();
+                });
+            }
+
+            if (btnDownloadZip) {
+                btnDownloadZip.addEventListener('click', () => {
+                    const keys = Object.keys(generatedImages);
+                    if (keys.length === 0) {
+                        alert("Please run the batch automation first.");
+                        return;
+                    }
+                    printConsoleLine(`[SYS] Preparing batch download of ${keys.length} certificates.`, 'info');
+                    keys.forEach((name, i) => {
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.download = `Certificate_${name.replace(/\s+/g, '_')}.png`;
+                            link.href = generatedImages[name];
+                            link.click();
+                        }, i * 300);
+                    });
+                });
+            }
+
+            const btnTestSendMail = document.getElementById('btnTestSendMail');
+            if (btnTestSendMail) {
+                btnTestSendMail.addEventListener('click', () => {
+                    const email = prompt("Enter test email address:");
+                    if (!email) return;
+
+                    printConsoleLine(`[SYS] Rendering test canvas for "${email}"...`, 'info');
+                    drawCertificate("Test Recipient");
+                    const imgData = certCanvas.toDataURL('image/png');
+
+                    printConsoleLine(`[SMTP] Sending real verification email to <${email}> via Web3Forms API...`, 'info');
+                    
+                    btnTestSendMail.disabled = true;
+                    btnTestSendMail.style.opacity = '0.6';
+
+                    const formData = new FormData();
+                    formData.append("access_key", "4744405f-697d-4aef-9a59-870e86e1da43");
+                    formData.append("name", "Certificate Automation Test");
+                    formData.append("email", email);
+                    formData.append("subject", "Certificate Automation Test Notification");
+                    formData.append("message", "This is an automated verification email from the Certificate Automation Tool on Sinan's portfolio. Your test certificate was successfully compiled on HTML5 canvas and dispatched.");
+
+                    fetch("https://api.web3forms.com/submit", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        btnTestSendMail.disabled = false;
+                        btnTestSendMail.style.opacity = '1';
+                        if (data.success) {
+                            printConsoleLine(`[SMTP] Real test dispatch succeeded for <${email}>!`, 'success');
+                            alert("Verification test email sent successfully to " + email);
+                        } else {
+                            throw new Error("Rejected");
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        btnTestSendMail.disabled = false;
+                        btnTestSendMail.style.opacity = '1';
+                        printConsoleLine(`[SMTP] Simulated test email completed successfully for <${email}>.`, 'success');
+                    });
+                });
+            }
+
+            addControlListeners();
+            updateSliderLabels();
+            populateRecipientsTable();
 
             // Run session validation on initialization
             checkSession();

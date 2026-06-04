@@ -1185,13 +1185,7 @@
             const drawerLoginToggle = document.getElementById('drawerLoginToggle');
             const drawerAdminToggle = document.getElementById('drawerAdminToggle');
 
-            // Add visual helper for simulation mode
-            if (useSimulation) {
-                const simBadge = document.createElement('div');
-                simBadge.className = 'simulation-badge';
-                simBadge.innerHTML = '<i class="fa-solid fa-flask"></i> Offline Demo Mode (Passcode: <strong>sinan123</strong>)';
-                document.querySelector('.lock-card').insertBefore(simBadge, document.querySelector('.lock-card h2'));
-            }
+
 
             // Helper to display messages
             const showMessage = (text, type = 'error') => {
@@ -1222,8 +1216,10 @@
                 localStorage.setItem('simulated_users', JSON.stringify(users));
             };
 
-            // Seed default requested user
+            // Seed default requested user & admin
             const seedUsers = getSimulatedUsers();
+            let seeded = false;
+
             if (!seedUsers.some(u => u.email.toLowerCase() === "hashmaskp@gmail.com")) {
                 seedUsers.push({
                     email: "hashmaskp@gmail.com",
@@ -1231,13 +1227,36 @@
                     approved: false,
                     createdAt: Date.now()
                 });
+                seeded = true;
+            }
+
+            if (!seedUsers.some(u => u.email.toLowerCase() === "sinanc.toall@gmail.com")) {
+                seedUsers.push({
+                    email: "sinanc.toall@gmail.com",
+                    password: "sinantewebpass",
+                    approved: true,
+                    isAdmin: true,
+                    createdAt: Date.now()
+                });
+                seeded = true;
+            }
+
+            if (seeded) {
                 saveSimulatedUsers(seedUsers);
             }
+
+            const isAdminUserLoggedIn = () => {
+                if (useSimulation) {
+                    return localStorage.getItem('simulated_user') === 'sinanc.toall@gmail.com';
+                } else {
+                    return auth && auth.currentUser && auth.currentUser.email === 'sinanc.toall@gmail.com';
+                }
+            };
 
             // Session Listener
             const checkSession = () => {
                 if (useSimulation) {
-                    const sessionUser = sessionStorage.getItem('simulated_user');
+                    const sessionUser = localStorage.getItem('simulated_user');
                     if (sessionUser) {
                         const users = getSimulatedUsers();
                         const user = users.find(u => u.email === sessionUser);
@@ -1246,7 +1265,7 @@
                         } else if (user) {
                             showPendingState(user.email);
                         } else {
-                            sessionStorage.removeItem('simulated_user');
+                            localStorage.removeItem('simulated_user');
                             lockSandbox();
                         }
                     } else {
@@ -1291,6 +1310,37 @@
                 hideMessage();
                 lockScreenGate.style.display = 'none';
                 toolsWorkspace.style.display = 'block';
+
+                // Show admin status badge if admin is logged in
+                let adminBadge = document.getElementById('activeAdminBadge');
+                if (isAdminUserLoggedIn()) {
+                    if (!adminBadge) {
+                        adminBadge = document.createElement('div');
+                        adminBadge.id = 'activeAdminBadge';
+                        adminBadge.style.position = 'fixed';
+                        adminBadge.style.bottom = '20px';
+                        adminBadge.style.left = '20px';
+                        adminBadge.style.zIndex = '999';
+                        adminBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+                        adminBadge.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                        adminBadge.style.color = '#34d399';
+                        adminBadge.style.padding = '8px 16px';
+                        adminBadge.style.borderRadius = '50px';
+                        adminBadge.style.fontSize = '0.8rem';
+                        adminBadge.style.fontWeight = '600';
+                        adminBadge.style.cursor = 'pointer';
+                        adminBadge.style.backdropFilter = 'blur(10px)';
+                        adminBadge.style.webkitBackdropFilter = 'blur(10px)';
+                        adminBadge.innerHTML = '<i class="fa-solid fa-user-shield"></i> Admin Panel (Superpowers Active)';
+                        adminBadge.addEventListener('click', () => toggleAdminDrawer(true));
+                        document.body.appendChild(adminBadge);
+                    } else {
+                        adminBadge.style.display = 'block';
+                    }
+                } else if (adminBadge) {
+                    adminBadge.style.display = 'none';
+                }
+
                 if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Lock Sandbox';
                 // Trigger scroll animation check if defined in global scripts
                 if (typeof window.animateOnScrollInit === 'function') {
@@ -1302,6 +1352,9 @@
                 toolsWorkspace.style.display = 'none';
                 lockScreenGate.style.display = 'flex';
                 if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-lock"></i> Login / Register';
+                const adminBadge = document.getElementById('activeAdminBadge');
+                if (adminBadge) adminBadge.style.display = 'none';
+
                 // Restore form
                 lockForm.style.display = 'block';
                 document.querySelector('.lock-subtitle').style.display = 'block';
@@ -1314,6 +1367,8 @@
                 document.querySelector('.lock-subtitle').style.display = 'none';
                 lockIcon.className = 'fa-solid fa-clock-rotate-left fa-pulse';
                 if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i> Pending Request';
+                const adminBadge = document.getElementById('activeAdminBadge');
+                if (adminBadge) adminBadge.style.display = 'none';
                 showMessage(`Welcome back! Your request for "${email}" is still pending approval.`, "pending");
                 
                 // Add a Log Out button if it doesn't exist
@@ -1334,7 +1389,7 @@
 
             const handleSignOut = () => {
                 if (useSimulation) {
-                    sessionStorage.removeItem('simulated_user');
+                    localStorage.removeItem('simulated_user');
                     const logoutBtn = document.getElementById('pendingLogoutBtn');
                     if (logoutBtn) logoutBtn.style.display = 'none';
                     lockSandbox();
@@ -1376,7 +1431,7 @@
                         createdAt: Date.now()
                     });
                     saveSimulatedUsers(users);
-                    sessionStorage.setItem('simulated_user', email);
+                    localStorage.setItem('simulated_user', email);
                     showPendingState(email);
                 } else {
                     auth.createUserWithEmailAndPassword(email, password)
@@ -1413,7 +1468,7 @@
                     const users = getSimulatedUsers();
                     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
                     if (user) {
-                        sessionStorage.setItem('simulated_user', email);
+                        localStorage.setItem('simulated_user', email);
                         if (user.approved) {
                             unlockSandbox();
                         } else {
@@ -1458,11 +1513,15 @@
             };
 
             triggerAdminPanel.addEventListener('click', () => {
-                const passcode = prompt("Enter Admin Secret Key:");
-                if (passcode === "sinan123") {
+                if (isAdminUserLoggedIn()) {
                     toggleAdminDrawer(true);
-                } else if (passcode !== null) {
-                    alert("Unauthorized access key!");
+                } else {
+                    const passcode = prompt("Enter Admin Secret Key:");
+                    if (passcode === "sinan123") {
+                        toggleAdminDrawer(true);
+                    } else if (passcode !== null) {
+                        alert("Unauthorized access key!");
+                    }
                 }
             });
 
@@ -1552,7 +1611,7 @@
                     if (navMenu) navMenu.classList.remove('active');
                     if (menuToggle) menuToggle.classList.remove('active');
 
-                    const sessionUser = useSimulation ? sessionStorage.getItem('simulated_user') : (auth && auth.currentUser);
+                    const sessionUser = useSimulation ? localStorage.getItem('simulated_user') : (auth && auth.currentUser);
                     if (sessionUser) {
                         handleSignOut();
                         showMessage("Sandbox locked successfully.", "success");
@@ -1572,11 +1631,15 @@
                     if (navMenu) navMenu.classList.remove('active');
                     if (menuToggle) menuToggle.classList.remove('active');
 
-                    const passcode = prompt("Enter Admin Secret Key:");
-                    if (passcode === "sinan123") {
+                    if (isAdminUserLoggedIn()) {
                         toggleAdminDrawer(true);
-                    } else if (passcode !== null) {
-                        alert("Unauthorized access key!");
+                    } else {
+                        const passcode = prompt("Enter Admin Secret Key:");
+                        if (passcode === "sinan123") {
+                            toggleAdminDrawer(true);
+                        } else if (passcode !== null) {
+                            alert("Unauthorized access key!");
+                        }
                     }
                 });
             }
@@ -1585,11 +1648,15 @@
             if (window.location.hash === '#admin') {
                 history.replaceState(null, null, ' '); // clear hash
                 setTimeout(() => {
-                    const passcode = prompt("Enter Admin Secret Key:");
-                    if (passcode === "sinan123") {
+                    if (isAdminUserLoggedIn()) {
                         toggleAdminDrawer(true);
-                    } else if (passcode !== null) {
-                        alert("Unauthorized access key!");
+                    } else {
+                        const passcode = prompt("Enter Admin Secret Key:");
+                        if (passcode === "sinan123") {
+                            toggleAdminDrawer(true);
+                        } else if (passcode !== null) {
+                            alert("Unauthorized access key!");
+                        }
                     }
                 }, 300);
             }

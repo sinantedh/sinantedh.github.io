@@ -27,6 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 navMenu.classList.remove('active');
             });
         });
+
+        // Close menu when clicking outside of the drawer panel and toggle button
+        document.addEventListener('click', (e) => {
+            if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
     }
 
     // Shrink header on scroll
@@ -500,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
 
         // Intercept local page links
-        const links = document.querySelectorAll('a[href^="index.html"], a[href^="portfolio.html"]');
+        const links = document.querySelectorAll('a[href^="index.html"], a[href^="portfolio.html"], a[href^="tools.html"]');
         links.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');

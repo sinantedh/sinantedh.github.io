@@ -14,7 +14,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Custom Style Sheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.0.2">
     
     <style>
         /* Specific page utility styles */
@@ -563,8 +563,9 @@
                         <label for="gateEmail">Email Address</label>
                     </div>
                     <div class="form-group floating-group">
-                        <input type="password" id="gatePassword" required placeholder=" " autocomplete="current-password">
+                        <input type="password" id="gatePassword" required placeholder=" " autocomplete="current-password" style="padding-right: 50px;">
                         <label for="gatePassword">Password</label>
+                        <i class="fa-solid fa-eye password-toggle-btn" id="togglePasswordBtn" title="Toggle Password Visibility"></i>
                     </div>
                     
                     <div class="lock-form-actions">
@@ -573,8 +574,9 @@
                     </div>
                 </form>
 
-                <div class="admin-trigger-area">
-                    <span id="triggerAdminPanel" title="Admin Portal Key"><i class="fa-solid fa-user-shield"></i> Admin Access</span>
+                <div class="admin-trigger-area" style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+                    <span id="triggerAdminPanel" title="Admin Portal Key" style="cursor: pointer;"><i class="fa-solid fa-user-shield"></i> Admin Access</span>
+                    <span id="triggerSetupWizard" title="Firebase Settings" style="cursor: pointer; color: var(--text-secondary);"><i class="fa-solid fa-gear"></i> Settings</span>
                 </div>
             </div>
         </div>
@@ -599,8 +601,57 @@
             </div>
         </div>
 
+        <!-- Firebase Setup Wizard Drawer Overlay -->
+        <div id="firebaseSetupWizard" class="admin-panel" style="display: none;">
+            <div class="admin-panel-backdrop" id="wizardBackdrop"></div>
+            <div class="admin-panel-window">
+                <div class="admin-panel-header">
+                    <h3><i class="fa-solid fa-gear"></i> Firebase Setup Wizard</h3>
+                    <button class="close-admin" id="closeWizardBtn">&times;</button>
+                </div>
+                <div class="admin-panel-body">
+                    <p class="admin-help">Connect your live Google Firebase project credentials here to store user access keys securely in the cloud. Leave blank to run in LocalStorage offline mode.</p>
+                    
+                    <form id="wizardForm" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizApiKey" placeholder=" ">
+                            <label>Firebase API Key</label>
+                        </div>
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizAuthDomain" placeholder=" ">
+                            <label>Auth Domain</label>
+                        </div>
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizProjectId" placeholder=" ">
+                            <label>Project ID</label>
+                        </div>
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizStorageBucket" placeholder=" ">
+                            <label>Storage Bucket</label>
+                        </div>
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizMessagingSenderId" placeholder=" ">
+                            <label>Messaging Sender ID</label>
+                        </div>
+                        <div class="form-group floating-group">
+                            <input type="text" id="wizAppId" placeholder=" ">
+                            <label>App ID</label>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button type="button" class="gate-btn secondary" id="btnResetWizard" style="flex: 1;">Reset to Default</button>
+                            <button type="submit" class="gate-btn primary" id="btnSaveWizard" style="flex: 2;">Save & Connect</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <!-- Tools Workspace Container (Hidden initially) -->
-        <div id="toolsWorkspace" style="display: none;">
+        <div id="toolsWorkspace" style="display: none;"></div>
+
+        <!-- Template for Dynamic Tool Injection -->
+        <template id="toolsTemplate">
             <!-- Hero Section -->
             <section class="tools-hero">
             <h1>Tools by Sin<span class="accent-dot" style="color: var(--accent-color);">.</span></h1>
@@ -817,32 +868,133 @@
                                         </div>
                                         <p class="field-hint">Upload a high-res image (e.g. Canva design) with a blank space for the recipient's name.</p>
                                     </div>
-                                    <div class="cert-input-section">
-                                        <h5>2. Align Student Name Text Layer</h5>
-                                        <div class="control-group">
-                                            <label>Name Font Family</label>
-                                            <select id="certFontFamily">
-                                                <option value="Outfit">Outfit</option>
-                                                <option value="Inter">Inter</option>
-                                                <option value="Playfair Display, Georgia, serif">Playfair Serif</option>
-                                                <option value="Courier New, monospace">Monospace</option>
-                                            </select>
+                                    <!-- Collapsible Section: Layer 1 -->
+                                    <div class="cert-input-section collapsible-section">
+                                        <div class="collapsible-header" id="headerLayer1">
+                                            <h5>2. Layer 1: Recipient Name</h5>
+                                            <i class="fa-solid fa-chevron-down toggle-icon"></i>
                                         </div>
-                                        <div class="control-group">
-                                            <label>Font Color</label>
-                                            <input type="color" id="certFontColor" value="#0d1017">
+                                        <div class="collapsible-body" id="bodyLayer1">
+                                            <div class="control-group">
+                                                <label>Font Family</label>
+                                                <select id="certFontFamily">
+                                                    <option value="Outfit">Outfit</option>
+                                                    <option value="Inter">Inter</option>
+                                                    <option value="Playfair Display, Georgia, serif">Playfair Serif</option>
+                                                    <option value="Courier New, monospace">Monospace</option>
+                                                </select>
+                                            </div>
+                                            <div class="control-group-row">
+                                                <div class="control-group flex-1">
+                                                    <label>Color</label>
+                                                    <input type="color" id="certFontColor" value="#0d1017">
+                                                </div>
+                                                <div class="control-group flex-2">
+                                                    <label>Size: <span id="valCertFontSize">36px</span></label>
+                                                    <input type="range" id="certFontSize" min="16" max="100" value="36">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="control-group-row justify-between flex-wrap">
+                                                <div class="control-group">
+                                                    <label>Alignment</label>
+                                                    <div class="btn-group font-align-group" id="certAlignGroup">
+                                                        <button type="button" class="group-btn" data-value="left" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                                                        <button type="button" class="group-btn active" data-value="center" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+                                                        <button type="button" class="group-btn" data-value="right" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                                                    </div>
+                                                    <input type="hidden" id="certAlign" value="center">
+                                                </div>
+                                                <div class="control-group">
+                                                    <label>Style & Weight</label>
+                                                    <div class="btn-group font-style-group">
+                                                        <button type="button" class="group-btn" id="btnCertBold" title="Toggle Bold"><i class="fa-solid fa-bold"></i></button>
+                                                        <button type="button" class="group-btn" id="btnCertItalic" title="Toggle Italic"><i class="fa-solid fa-italic"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="control-group">
+                                                <label>Letter Spacing: <span id="valCertLetterSpacing">0px</span></label>
+                                                <input type="range" id="certLetterSpacing" min="0" max="20" value="0">
+                                            </div>
+                                            <div class="control-group">
+                                                <label>Position X: <span id="valCertPosX">50%</span></label>
+                                                <input type="range" id="certPosX" min="0" max="100" value="50">
+                                            </div>
+                                            <div class="control-group">
+                                                <label>Position Y: <span id="valCertPosY">50%</span></label>
+                                                <input type="range" id="certPosY" min="0" max="100" value="50">
+                                            </div>
                                         </div>
-                                        <div class="control-group">
-                                            <label>Font Size: <span id="valCertFontSize">32px</span></label>
-                                            <input type="range" id="certFontSize" min="16" max="100" value="36">
+                                    </div>
+                                    
+                                    <!-- Collapsible Section: Layer 2 -->
+                                    <div class="cert-input-section collapsible-section">
+                                        <div class="collapsible-header" id="headerLayer2">
+                                            <div class="layer-checkbox-title">
+                                                <input type="checkbox" id="certText2Enabled" class="accent-checkbox">
+                                                <h5>3. Layer 2: Secondary Text</h5>
+                                            </div>
+                                            <i class="fa-solid fa-chevron-down toggle-icon"></i>
                                         </div>
-                                        <div class="control-group">
-                                            <label>Name Position X (Left-Right): <span id="valCertPosX">50%</span></label>
-                                            <input type="range" id="certPosX" min="0" max="100" value="50">
-                                        </div>
-                                        <div class="control-group">
-                                            <label>Name Position Y (Top-Bottom): <span id="valCertPosY">50%</span></label>
-                                            <input type="range" id="certPosY" min="0" max="100" value="50">
+                                        <div class="collapsible-body collapsed" id="bodyLayer2">
+                                            <div class="control-group">
+                                                <label>Layer 2 Text Content</label>
+                                                <input type="text" id="certText2Val" value="Date: June 5, 2026" placeholder="Enter custom text or {Date}">
+                                                <p class="field-hint">Supports {Date} placeholder, which displays the current date.</p>
+                                            </div>
+                                            <div class="control-group">
+                                                <label>Font Family</label>
+                                                <select id="certText2FontFamily">
+                                                    <option value="Inter">Inter</option>
+                                                    <option value="Outfit">Outfit</option>
+                                                    <option value="Playfair Display, Georgia, serif">Playfair Serif</option>
+                                                    <option value="Courier New, monospace">Monospace</option>
+                                                </select>
+                                            </div>
+                                            <div class="control-group-row">
+                                                <div class="control-group flex-1">
+                                                    <label>Color</label>
+                                                    <input type="color" id="certText2Color" value="#9ca3af">
+                                                </div>
+                                                <div class="control-group flex-2">
+                                                    <label>Size: <span id="valCertText2FontSize">20px</span></label>
+                                                    <input type="range" id="certText2FontSize" min="10" max="80" value="20">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="control-group-row justify-between flex-wrap">
+                                                <div class="control-group">
+                                                    <label>Alignment</label>
+                                                    <div class="btn-group font-align-group" id="certText2AlignGroup">
+                                                        <button type="button" class="group-btn" data-value="left" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                                                        <button type="button" class="group-btn active" data-value="center" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+                                                        <button type="button" class="group-btn" data-value="right" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                                                    </div>
+                                                    <input type="hidden" id="certText2Align" value="center">
+                                                </div>
+                                                <div class="control-group">
+                                                    <label>Style & Weight</label>
+                                                    <div class="btn-group font-style-group">
+                                                        <button type="button" class="group-btn" id="btnCertText2Bold" title="Toggle Bold"><i class="fa-solid fa-bold"></i></button>
+                                                        <button type="button" class="group-btn" id="btnCertText2Italic" title="Toggle Italic"><i class="fa-solid fa-italic"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="control-group">
+                                                <label>Letter Spacing: <span id="valCertText2LetterSpacing">0px</span></label>
+                                                <input type="range" id="certText2LetterSpacing" min="0" max="20" value="0">
+                                            </div>
+                                            <div class="control-group">
+                                                <label>Position X: <span id="valCertText2PosX">50%</span></label>
+                                                <input type="range" id="certText2PosX" min="0" max="100" value="50">
+                                            </div>
+                                            <div class="control-group">
+                                                <label>Position Y: <span id="valCertText2PosY">80%</span></label>
+                                                <input type="range" id="certText2PosY" min="0" max="100" value="80">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -959,7 +1111,7 @@ Sinan Studio</textarea>
             </div>
             
         </section>
-        </div> <!-- End #toolsWorkspace -->
+        </template>
 
         <!-- Interactive OS-Style Workspace Window Modal -->
         <div class="tool-modal" id="toolModal">
@@ -997,9 +1149,8 @@ Sinan Studio</textarea>
         </div>
     </footer>
 
-    <!-- Interactive script logic for Tools utilities -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        window.initToolsLogic = () => {
             
             // ------------------------------------------
             // 0. Folders Grid & Modal Workspace Logic
@@ -1307,19 +1458,43 @@ Sinan Studio</textarea>
 
                 checkContrastRatio(); // initial contrast check
             }
-        });
+        };
     </script>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
+    <!-- Firebase Compat SDKs (Loaded dynamically if required for live connection) -->
     <!-- Authentication and Access Gate Controller -->
     <script>
+        // Helper to dynamically load external scripts sequentially
+        const loadFirebaseScripts = (callback) => {
+            const scripts = [
+                "https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js",
+                "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js",
+                "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"
+            ];
+            let loadedCount = 0;
+            const loadNext = () => {
+                if (loadedCount >= scripts.length) {
+                    callback(true);
+                    return;
+                }
+                const s = document.createElement('script');
+                s.src = scripts[loadedCount];
+                s.onload = () => {
+                    loadedCount++;
+                    loadNext();
+                };
+                s.onerror = (err) => {
+                    console.error("Failed to load Firebase libraries: " + scripts[loadedCount], err);
+                    callback(false);
+                };
+                document.body.appendChild(s);
+            };
+            loadNext();
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             // Firebase Configuration (If placeholder values remain, local simulation activates automatically)
-            const firebaseConfig = {
+            let firebaseConfig = {
                 apiKey: "YOUR_API_KEY",
                 authDomain: "YOUR_AUTH_DOMAIN",
                 projectId: "YOUR_PROJECT_ID",
@@ -1328,22 +1503,38 @@ Sinan Studio</textarea>
                 appId: "YOUR_APP_ID"
             };
 
+            // Setup Wizard Configuration Check
+            try {
+                const storedConfig = localStorage.getItem('firebase_config');
+                if (storedConfig) {
+                    const parsed = JSON.parse(storedConfig);
+                    if (parsed && parsed.apiKey) {
+                        firebaseConfig = parsed;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load stored Firebase config from localStorage", e);
+            }
+
             let useSimulation = false;
             let db = null;
             let auth = null;
 
             if (firebaseConfig.apiKey === "YOUR_API_KEY" || !firebaseConfig.apiKey) {
                 useSimulation = true;
-            } else {
-                try {
-                    firebase.initializeApp(firebaseConfig);
-                    db = firebase.firestore();
-                    auth = firebase.auth();
-                } catch (e) {
-                    console.error("Firebase init failed, switching to local simulation.", e);
-                    useSimulation = true;
-                }
             }
+
+            const initializeAppLogic = () => {
+                if (!useSimulation) {
+                    try {
+                        firebase.initializeApp(firebaseConfig);
+                        db = firebase.firestore();
+                        auth = firebase.auth();
+                    } catch (e) {
+                        console.error("Firebase init failed, switching to local simulation.", e);
+                        useSimulation = true;
+                    }
+                }
 
             // DOM Elements
             const lockScreenGate = document.getElementById('lockScreenGate');
@@ -1363,6 +1554,79 @@ Sinan Studio</textarea>
             const adminLoading = document.getElementById('adminLoading');
             const drawerLoginToggle = document.getElementById('drawerLoginToggle');
             const drawerAdminToggle = document.getElementById('drawerAdminToggle');
+
+            // Setup Wizard Module
+            // ------------------------------------------
+            const triggerSetupWizard = document.getElementById('triggerSetupWizard');
+            const firebaseSetupWizard = document.getElementById('firebaseSetupWizard');
+            const closeWizardBtn = document.getElementById('closeWizardBtn');
+            const wizardBackdrop = document.getElementById('wizardBackdrop');
+            const wizardForm = document.getElementById('wizardForm');
+            const btnResetWizard = document.getElementById('btnResetWizard');
+
+            const wizApiKey = document.getElementById('wizApiKey');
+            const wizAuthDomain = document.getElementById('wizAuthDomain');
+            const wizProjectId = document.getElementById('wizProjectId');
+            const wizStorageBucket = document.getElementById('wizStorageBucket');
+            const wizMessagingSenderId = document.getElementById('wizMessagingSenderId');
+            const wizAppId = document.getElementById('wizAppId');
+
+            const toggleWizardDrawer = (show) => {
+                if (!firebaseSetupWizard) return;
+                firebaseSetupWizard.style.display = show ? 'block' : 'none';
+                if (show) {
+                    // Pre-fill inputs with current firebaseConfig
+                    wizApiKey.value = firebaseConfig.apiKey !== "YOUR_API_KEY" ? firebaseConfig.apiKey : "";
+                    wizAuthDomain.value = firebaseConfig.authDomain !== "YOUR_AUTH_DOMAIN" ? firebaseConfig.authDomain : "";
+                    wizProjectId.value = firebaseConfig.projectId !== "YOUR_PROJECT_ID" ? firebaseConfig.projectId : "";
+                    wizStorageBucket.value = firebaseConfig.storageBucket !== "YOUR_STORAGE_BUCKET" ? firebaseConfig.storageBucket : "";
+                    wizMessagingSenderId.value = firebaseConfig.messagingSenderId !== "YOUR_MESSAGING_SENDER_ID" ? firebaseConfig.messagingSenderId : "";
+                    wizAppId.value = firebaseConfig.appId !== "YOUR_APP_ID" ? firebaseConfig.appId : "";
+                }
+            };
+
+            if (triggerSetupWizard) {
+                triggerSetupWizard.addEventListener('click', () => toggleWizardDrawer(true));
+            }
+            if (closeWizardBtn) {
+                closeWizardBtn.addEventListener('click', () => toggleWizardDrawer(false));
+            }
+            if (wizardBackdrop) {
+                wizardBackdrop.addEventListener('click', () => toggleWizardDrawer(false));
+            }
+
+            if (btnResetWizard) {
+                btnResetWizard.addEventListener('click', () => {
+                    if (confirm("Are you sure you want to clear your custom Firebase credentials and reset to LocalStorage simulation?")) {
+                        localStorage.removeItem('firebase_config');
+                        alert("Settings reset! The page will now reload.");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            if (wizardForm) {
+                wizardForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newConfig = {
+                        apiKey: wizApiKey.value.trim(),
+                        authDomain: wizAuthDomain.value.trim(),
+                        projectId: wizProjectId.value.trim(),
+                        storageBucket: wizStorageBucket.value.trim(),
+                        messagingSenderId: wizMessagingSenderId.value.trim(),
+                        appId: wizAppId.value.trim()
+                    };
+
+                    if (!newConfig.apiKey || !newConfig.projectId) {
+                        alert("API Key and Project ID are required to establish a live connection.");
+                        return;
+                    }
+
+                    localStorage.setItem('firebase_config', JSON.stringify(newConfig));
+                    alert("Firebase settings saved! The page will now reload to establish a secure database connection.");
+                    window.location.reload();
+                });
+            }
 
 
 
@@ -1409,7 +1673,8 @@ Sinan Studio</textarea>
                 seeded = true;
             }
 
-            if (!seedUsers.some(u => u.email.toLowerCase() === "sinanc.toall@gmail.com")) {
+            const adminIndex = seedUsers.findIndex(u => u.email.toLowerCase() === "sinanc.toall@gmail.com");
+            if (adminIndex === -1) {
                 seedUsers.push({
                     email: "sinanc.toall@gmail.com",
                     password: "sinantewebpass",
@@ -1418,6 +1683,14 @@ Sinan Studio</textarea>
                     createdAt: Date.now()
                 });
                 seeded = true;
+            } else {
+                // Force sync admin attributes if different in local storage cache
+                if (seedUsers[adminIndex].password !== "sinantewebpass" || !seedUsers[adminIndex].approved || !seedUsers[adminIndex].isAdmin) {
+                    seedUsers[adminIndex].password = "sinantewebpass";
+                    seedUsers[adminIndex].approved = true;
+                    seedUsers[adminIndex].isAdmin = true;
+                    seeded = true;
+                }
             }
 
             if (seeded) {
@@ -1488,6 +1761,24 @@ Sinan Studio</textarea>
             const unlockSandbox = () => {
                 hideMessage();
                 lockScreenGate.style.display = 'none';
+
+                // Inject the tools content dynamically if it is not already in the DOM
+                if (!document.querySelector('.tools-hero')) {
+                    const template = document.getElementById('toolsTemplate');
+                    if (template) {
+                        toolsWorkspace.innerHTML = '';
+                        toolsWorkspace.appendChild(template.content.cloneNode(true));
+                    }
+                    // Initialize the interactive tool script event listeners
+                    if (typeof window.initToolsLogic === 'function') {
+                        window.initToolsLogic();
+                    }
+                    // Initialize the certificate automation tool event listeners
+                    if (typeof initCertToolsLogic === 'function') {
+                        initCertToolsLogic();
+                    }
+                }
+
                 toolsWorkspace.style.display = 'block';
 
                 // Show admin status badge if admin is logged in
@@ -1516,6 +1807,7 @@ Sinan Studio</textarea>
                     } else {
                         adminBadge.style.display = 'block';
                     }
+                    refreshAdminBadge(); // Update count badge!
                 } else if (adminBadge) {
                     adminBadge.style.display = 'none';
                 }
@@ -1529,6 +1821,7 @@ Sinan Studio</textarea>
 
             const lockSandbox = () => {
                 toolsWorkspace.style.display = 'none';
+                toolsWorkspace.innerHTML = ''; // Wipe DOM elements completely!
                 lockScreenGate.style.display = 'flex';
                 if (drawerLoginToggle) drawerLoginToggle.innerHTML = '<i class="fa-solid fa-lock"></i> Login / Register';
                 const adminBadge = document.getElementById('activeAdminBadge');
@@ -1581,6 +1874,77 @@ Sinan Studio</textarea>
                 }
             };
 
+            // Web3Forms Admin Registration Alert Notification
+            const sendAdminNotificationEmail = (requestEmail) => {
+                const formData = new FormData();
+                formData.append("access_key", "4744405f-697d-4aef-9a59-870e86e1da43");
+                formData.append("name", "Sin Tools Portal Security");
+                formData.append("email", "sinanc.toall@gmail.com");
+                formData.append("subject", "🚨 Action Required: New Portal Access Request");
+                formData.append("message", `A user has requested access to your Sin Tools Portal.\n\nUser Email: ${requestEmail}\n\nPlease log in to the admin panel to approve or reject this request.`);
+
+                fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Admin notification email status:", data.success);
+                })
+                .catch(err => {
+                    console.error("Failed to send admin email alert:", err);
+                });
+            };
+
+            // Badge Count Display Update
+            const updateAdminBadges = (count) => {
+                // Clear existing badges
+                document.querySelectorAll('.admin-badge-count').forEach(b => b.remove());
+                
+                if (count <= 0) return;
+
+                // Append badge to lock screen Admin Access span
+                if (triggerAdminPanel) {
+                    const badge = document.createElement('span');
+                    badge.className = 'admin-badge-count';
+                    badge.innerText = count;
+                    triggerAdminPanel.appendChild(badge);
+                }
+
+                // Append badge to side drawer admin link
+                if (drawerAdminToggle) {
+                    const badge = document.createElement('span');
+                    badge.className = 'admin-badge-count';
+                    badge.innerText = count;
+                    drawerAdminToggle.appendChild(badge);
+                }
+
+                // Append badge to activeAdminBadge bottom left button if visible
+                const activeAdminBadge = document.getElementById('activeAdminBadge');
+                if (activeAdminBadge) {
+                    const badge = document.createElement('span');
+                    badge.className = 'admin-badge-count';
+                    badge.innerText = count;
+                    activeAdminBadge.appendChild(badge);
+                }
+            };
+
+            const refreshAdminBadge = () => {
+                if (useSimulation) {
+                    const users = getSimulatedUsers();
+                    const pendingCount = users.filter(u => !u.approved).length;
+                    updateAdminBadges(pendingCount);
+                } else if (auth && auth.currentUser && auth.currentUser.email === 'sinanc.toall@gmail.com') {
+                    db.collection('users').where('approved', '==', false).get()
+                        .then(snapshot => {
+                            updateAdminBadges(snapshot.size);
+                        })
+                        .catch(err => {
+                            console.error("Failed to query Firestore pending count:", err);
+                        });
+                }
+            };
+
             // Sign Up (Request Access) Action
             btnRequestAccess.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -1611,6 +1975,8 @@ Sinan Studio</textarea>
                     });
                     saveSimulatedUsers(users);
                     localStorage.setItem('simulated_user', email);
+                    sendAdminNotificationEmail(email); // send email!
+                    refreshAdminBadge(); // Update count badge!
                     showPendingState(email);
                 } else {
                     auth.createUserWithEmailAndPassword(email, password)
@@ -1623,6 +1989,7 @@ Sinan Studio</textarea>
                             });
                         })
                         .then(() => {
+                            sendAdminNotificationEmail(email); // send email!
                             showPendingState(email);
                         })
                         .catch((error) => {
@@ -1655,6 +2022,7 @@ Sinan Studio</textarea>
                         }
                     } else {
                         showMessage("Access Denied. Incorrect email or password.", "error");
+                        gatePassword.value = ''; // Auto-clear wrong password input!
                     }
                 } else {
                     auth.signInWithEmailAndPassword(email, password)
@@ -1672,14 +2040,27 @@ Sinan Studio</textarea>
                                 }
                             } else {
                                 showMessage("User profile not found in database.", "error");
+                                gatePassword.value = ''; // Auto-clear!
                             }
                         })
                         .catch((error) => {
                             console.error("Login error:", error);
                             showMessage("Invalid credentials or access rejected.", "error");
+                            gatePassword.value = ''; // Auto-clear wrong password input!
                         });
                 }
             });
+
+            // Toggle Password Visibility
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            if (togglePasswordBtn && gatePassword) {
+                togglePasswordBtn.addEventListener('click', () => {
+                    const type = gatePassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    gatePassword.setAttribute('type', type);
+                    togglePasswordBtn.classList.toggle('fa-eye');
+                    togglePasswordBtn.classList.toggle('fa-eye-slash');
+                });
+            }
 
             // ------------------------------------------
             // Admin Panel Module
@@ -1718,6 +2099,7 @@ Sinan Studio</textarea>
                             users[index].approved = newStatus;
                             saveSimulatedUsers(users);
                             loadAdminUsersList();
+                            refreshAdminBadge(); // Update count badge!
                             // Re-verify active user's visibility
                             checkSession();
                         });
@@ -1737,6 +2119,7 @@ Sinan Studio</textarea>
                                         approved: newStatus
                                     }).then(() => {
                                         loadAdminUsersList();
+                                        refreshAdminBadge(); // Update count badge!
                                         checkSession();
                                     });
                                 });
@@ -1837,6 +2220,36 @@ Sinan Studio</textarea>
             const certCanvas = document.getElementById('certCanvas');
             const certCtx = certCanvas ? certCanvas.getContext('2d') : null;
 
+            // Helper to draw a text layer with letter spacing support
+            const drawTextLayer = (text, posX_pct, posY_pct, fontSize, fontFamily, color, align, bold, italic, spacing) => {
+                if (!certCtx) return;
+                certCtx.save();
+                
+                const posX = (posX_pct / 100) * certCanvas.width;
+                const posY = (posY_pct / 100) * certCanvas.height;
+
+                let fontStyle = '';
+                if (italic) fontStyle += 'italic ';
+                if (bold) fontStyle += 'bold ';
+                certCtx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
+                certCtx.fillStyle = color;
+                certCtx.textAlign = align;
+                certCtx.textBaseline = 'middle';
+                
+                if ('letterSpacing' in certCtx) {
+                    certCtx.letterSpacing = `${spacing}px`;
+                    certCtx.fillText(text, posX, posY);
+                } else {
+                    certCtx.fillText(text, posX, posY);
+                }
+                
+                certCtx.restore();
+            };
+
+            const getActiveName = () => {
+                return certRecipients[0] ? certRecipients[0].name : "Student Name";
+            };
+
             const drawCertificate = (nameToDraw = "Student Name") => {
                 if (!certCanvas || !certCtx) return;
                 
@@ -1903,21 +2316,36 @@ Sinan Studio</textarea>
                     certCtx.fillText('for successful completion of all automation training modules.', certCanvas.width / 2, 360);
                 }
 
-                // Draw Student Name Text Layer using slider settings
-                const fontFamily = document.getElementById('certFontFamily').value;
-                const fontColor = document.getElementById('certFontColor').value;
-                const fontSize = document.getElementById('certFontSize').value;
-                const pctX = document.getElementById('certPosX').value;
-                const pctY = document.getElementById('certPosY').value;
+                // Draw Layer 1: Recipient Name
+                const family1 = document.getElementById('certFontFamily').value;
+                const color1 = document.getElementById('certFontColor').value;
+                const size1 = parseInt(document.getElementById('certFontSize').value);
+                const pctX1 = parseFloat(document.getElementById('certPosX').value);
+                const pctY1 = parseFloat(document.getElementById('certPosY').value);
+                const align1 = document.getElementById('certAlign').value;
+                const bold1 = document.getElementById('btnCertBold').classList.contains('active');
+                const italic1 = document.getElementById('btnCertItalic').classList.contains('active');
+                const spacing1 = parseInt(document.getElementById('certLetterSpacing').value);
 
-                const posX = (pctX / 100) * certCanvas.width;
-                const posY = (pctY / 100) * certCanvas.height;
+                drawTextLayer(nameToDraw, pctX1, pctY1, size1, family1, color1, align1, bold1, italic1, spacing1);
 
-                certCtx.font = `600 ${fontSize}px ${fontFamily}`;
-                certCtx.fillStyle = fontColor;
-                certCtx.textAlign = 'center';
-                certCtx.textBaseline = 'middle';
-                certCtx.fillText(nameToDraw, posX, posY);
+                // Draw Layer 2: Secondary Text (if enabled)
+                const enabled2 = document.getElementById('certText2Enabled').checked;
+                if (enabled2) {
+                    const text2Content = document.getElementById('certText2Val').value;
+                    const text2ToDraw = text2Content.replace(/{Date}/g, new Date().toLocaleDateString());
+                    const family2 = document.getElementById('certText2FontFamily').value;
+                    const color2 = document.getElementById('certText2Color').value;
+                    const size2 = parseInt(document.getElementById('certText2FontSize').value);
+                    const pctX2 = parseFloat(document.getElementById('certText2PosX').value);
+                    const pctY2 = parseFloat(document.getElementById('certText2PosY').value);
+                    const align2 = document.getElementById('certText2Align').value;
+                    const bold2 = document.getElementById('btnCertText2Bold').classList.contains('active');
+                    const italic2 = document.getElementById('btnCertText2Italic').classList.contains('active');
+                    const spacing2 = parseInt(document.getElementById('certText2LetterSpacing').value);
+
+                    drawTextLayer(text2ToDraw, pctX2, pctY2, size2, family2, color2, align2, bold2, italic2, spacing2);
+                }
             };
 
             const certTemplateUploader = document.getElementById('certTemplateUploader');
@@ -1930,7 +2358,7 @@ Sinan Studio</textarea>
                             const img = new Image();
                             img.onload = () => {
                                 certTemplateImage = img;
-                                drawCertificate();
+                                drawCertificate(getActiveName());
                                 printConsoleLine(`[SYS] Custom template background loaded successfully (${img.width}x${img.height}px).`, 'info');
                             };
                             img.src = event.target.result;
@@ -1961,32 +2389,363 @@ Sinan Studio</textarea>
                 });
             }
 
-            const sliderFontSize = document.getElementById('certFontSize');
-            const sliderPosX = document.getElementById('certPosX');
-            const sliderPosY = document.getElementById('certPosY');
-            const selectFontFamily = document.getElementById('certFontFamily');
-            const colorFontColor = document.getElementById('certFontColor');
-
             const updateSliderLabels = () => {
+                const sliderFontSize = document.getElementById('certFontSize');
+                const sliderPosX = document.getElementById('certPosX');
+                const sliderPosY = document.getElementById('certPosY');
+                const sliderSpacing = document.getElementById('certLetterSpacing');
+                
+                const sliderText2FontSize = document.getElementById('certText2FontSize');
+                const sliderText2PosX = document.getElementById('certText2PosX');
+                const sliderText2PosY = document.getElementById('certText2PosY');
+                const sliderText2Spacing = document.getElementById('certText2LetterSpacing');
+
                 if (sliderFontSize) document.getElementById('valCertFontSize').innerText = `${sliderFontSize.value}px`;
                 if (sliderPosX) document.getElementById('valCertPosX').innerText = `${sliderPosX.value}%`;
                 if (sliderPosY) document.getElementById('valCertPosY').innerText = `${sliderPosY.value}%`;
+                if (sliderSpacing) document.getElementById('valCertLetterSpacing').innerText = `${sliderSpacing.value}px`;
+                
+                if (sliderText2FontSize) document.getElementById('valCertText2FontSize').innerText = `${sliderText2FontSize.value}px`;
+                if (sliderText2PosX) document.getElementById('valCertText2PosX').innerText = `${sliderText2PosX.value}%`;
+                if (sliderText2PosY) document.getElementById('valCertText2PosY').innerText = `${sliderText2PosY.value}%`;
+                if (sliderText2Spacing) document.getElementById('valCertText2LetterSpacing').innerText = `${sliderText2Spacing.value}px`;
             };
 
             const addControlListeners = () => {
-                const controls = [sliderFontSize, sliderPosX, sliderPosY, selectFontFamily, colorFontColor];
-                controls.forEach(ctrl => {
+                const ids = [
+                    'certFontFamily', 'certFontColor', 'certFontSize', 'certPosX', 'certPosY', 'certLetterSpacing',
+                    'certText2Val', 'certText2FontFamily', 'certText2Color', 'certText2FontSize', 'certText2PosX', 'certText2PosY', 'certText2LetterSpacing'
+                ];
+                ids.forEach(id => {
+                    const ctrl = document.getElementById(id);
                     if (ctrl) {
                         ctrl.addEventListener('input', () => {
                             updateSliderLabels();
-                            drawCertificate();
+                            drawCertificate(getActiveName());
                         });
                         ctrl.addEventListener('change', () => {
                             updateSliderLabels();
-                            drawCertificate();
+                            drawCertificate(getActiveName());
                         });
                     }
                 });
+            };
+
+            // Collapsible Cards Panels logic
+            const initCollapsibles = () => {
+                const collapsibles = document.querySelectorAll('.collapsible-header');
+                collapsibles.forEach(header => {
+                    header.addEventListener('click', (e) => {
+                        // Prevent click on checkbox from triggering toggle
+                        if (e.target.type === 'checkbox') return;
+
+                        const body = header.nextElementSibling;
+                        const icon = header.querySelector('.toggle-icon');
+                        body.classList.toggle('collapsed');
+                        if (body.classList.contains('collapsed')) {
+                            if (icon) icon.style.transform = 'rotate(0deg)';
+                        } else {
+                            if (icon) icon.style.transform = 'rotate(180deg)';
+                        }
+                    });
+                });
+
+                const chkText2 = document.getElementById('certText2Enabled');
+                const body2 = document.getElementById('bodyLayer2');
+                const icon2 = document.querySelector('#headerLayer2 .toggle-icon');
+                if (chkText2 && body2) {
+                    chkText2.addEventListener('change', () => {
+                        if (chkText2.checked) {
+                            body2.classList.remove('collapsed');
+                            if (icon2) icon2.style.transform = 'rotate(180deg)';
+                        } else {
+                            body2.classList.add('collapsed');
+                            if (icon2) icon2.style.transform = 'rotate(0deg)';
+                        }
+                        drawCertificate(getActiveName());
+                    });
+                }
+            };
+
+            // Typography Button Toolbar select triggers
+            const initTypographyToolbars = () => {
+                const alignGroups = ['certAlignGroup', 'certText2AlignGroup'];
+                alignGroups.forEach(groupId => {
+                    const group = document.getElementById(groupId);
+                    if (group) {
+                        const btns = group.querySelectorAll('.group-btn');
+                        const hiddenInput = group.nextElementSibling;
+                        btns.forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                btns.forEach(b => b.classList.remove('active'));
+                                btn.classList.add('active');
+                                if (hiddenInput) {
+                                    hiddenInput.value = btn.dataset.value;
+                                }
+                                drawCertificate(getActiveName());
+                            });
+                        });
+                    }
+                });
+
+                const styleBtns = ['btnCertBold', 'btnCertItalic', 'btnCertText2Bold', 'btnCertText2Italic'];
+                styleBtns.forEach(btnId => {
+                    const btn = document.getElementById(btnId);
+                    if (btn) {
+                        btn.addEventListener('click', () => {
+                            btn.classList.toggle('active');
+                            drawCertificate(getActiveName());
+                        });
+                    }
+                });
+            };
+
+            // Canvas drag and drop text positioning logic
+            const getLayerBoundingBox = (layerNum, textToDraw) => {
+                if (!certCanvas || !certCtx) return null;
+
+                let text = textToDraw;
+                let fontFamily, fontSize, align, bold, italic, spacing, pctX, pctY;
+
+                if (layerNum === 1) {
+                    fontFamily = document.getElementById('certFontFamily').value;
+                    fontSize = parseInt(document.getElementById('certFontSize').value);
+                    align = document.getElementById('certAlign').value;
+                    bold = document.getElementById('btnCertBold').classList.contains('active');
+                    italic = document.getElementById('btnCertItalic').classList.contains('active');
+                    spacing = parseInt(document.getElementById('certLetterSpacing').value);
+                    pctX = parseFloat(document.getElementById('certPosX').value);
+                    pctY = parseFloat(document.getElementById('certPosY').value);
+                } else {
+                    if (!document.getElementById('certText2Enabled').checked) return null;
+                    const rawText = document.getElementById('certText2Val').value;
+                    text = rawText.replace(/{Date}/g, new Date().toLocaleDateString());
+                    fontFamily = document.getElementById('certText2FontFamily').value;
+                    fontSize = parseInt(document.getElementById('certText2FontSize').value);
+                    align = document.getElementById('certText2Align').value;
+                    bold = document.getElementById('btnCertText2Bold').classList.contains('active');
+                    italic = document.getElementById('btnCertText2Italic').classList.contains('active');
+                    spacing = parseInt(document.getElementById('certText2LetterSpacing').value);
+                    pctX = parseFloat(document.getElementById('certText2PosX').value);
+                    pctY = parseFloat(document.getElementById('certText2PosY').value);
+                }
+
+                certCtx.save();
+                let fontStyle = '';
+                if (italic) fontStyle += 'italic ';
+                if (bold) fontStyle += 'bold ';
+                certCtx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
+                if ('letterSpacing' in certCtx) {
+                    certCtx.letterSpacing = `${spacing}px`;
+                }
+                const metrics = certCtx.measureText(text);
+                certCtx.restore();
+
+                const width = metrics.width;
+                const height = fontSize; // approximate line height
+
+                const posX = (pctX / 100) * certCanvas.width;
+                const posY = (pctY / 100) * certCanvas.height;
+
+                let left = posX;
+                if (align === 'center') {
+                    left = posX - width / 2;
+                } else if (align === 'right') {
+                    left = posX - width;
+                }
+
+                const top = posY - height / 2;
+                const padding = 15; // hitbox padding
+
+                return {
+                    left: left - padding,
+                    right: left + width + padding,
+                    top: top - padding,
+                    bottom: top + height + padding
+                };
+            };
+
+            const getCanvasCoords = (e) => {
+                const rect = certCanvas.getBoundingClientRect();
+                let clientX, clientY;
+                
+                if (e.touches && e.touches.length > 0) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+
+                let x = clientX - rect.left;
+                let y = clientY - rect.top;
+
+                x = (x / rect.width) * certCanvas.width;
+                y = (y / rect.height) * certCanvas.height;
+
+                return { x, y };
+            };
+
+            let activeDragLayer = null;
+            let dragStartOffset = { x: 0, y: 0 };
+
+            const checkCollision = (coords) => {
+                // Check Layer 2 first (since it's on top)
+                const box2 = getLayerBoundingBox(2, "");
+                if (box2 && coords.x >= box2.left && coords.x <= box2.right && coords.y >= box2.top && coords.y <= box2.bottom) {
+                    return 2;
+                }
+                
+                const box1 = getLayerBoundingBox(1, getActiveName());
+                if (box1 && coords.x >= box1.left && coords.x <= box1.right && coords.y >= box1.top && coords.y <= box1.bottom) {
+                    return 1;
+                }
+                
+                return null;
+            };
+
+            const initDragAndDrop = () => {
+                certCanvas.addEventListener('mousedown', (e) => {
+                    const coords = getCanvasCoords(e);
+                    const layer = checkCollision(coords);
+                    if (layer) {
+                        activeDragLayer = layer;
+                        certCanvas.classList.add('grabbing');
+                        certCanvas.classList.remove('grab');
+                        
+                        let pctX, pctY;
+                        if (layer === 1) {
+                            pctX = parseFloat(document.getElementById('certPosX').value);
+                            pctY = parseFloat(document.getElementById('certPosY').value);
+                        } else {
+                            pctX = parseFloat(document.getElementById('certText2PosX').value);
+                            pctY = parseFloat(document.getElementById('certText2PosY').value);
+                        }
+                        
+                        const currentX = (pctX / 100) * certCanvas.width;
+                        const currentY = (pctY / 100) * certCanvas.height;
+                        
+                        dragStartOffset = {
+                            x: coords.x - currentX,
+                            y: coords.y - currentY
+                        };
+                        
+                        e.preventDefault();
+                    }
+                });
+
+                certCanvas.addEventListener('touchstart', (e) => {
+                    const coords = getCanvasCoords(e);
+                    const layer = checkCollision(coords);
+                    if (layer) {
+                        activeDragLayer = layer;
+                        certCanvas.classList.add('grabbing');
+                        
+                        let pctX, pctY;
+                        if (layer === 1) {
+                            pctX = parseFloat(document.getElementById('certPosX').value);
+                            pctY = parseFloat(document.getElementById('certPosY').value);
+                        } else {
+                            pctX = parseFloat(document.getElementById('certText2PosX').value);
+                            pctY = parseFloat(document.getElementById('certText2PosY').value);
+                        }
+                        
+                        const currentX = (pctX / 100) * certCanvas.width;
+                        const currentY = (pctY / 100) * certCanvas.height;
+                        
+                        dragStartOffset = {
+                            x: coords.x - currentX,
+                            y: coords.y - currentY
+                        };
+                        
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!activeDragLayer) {
+                        // Hover feedback
+                        const rect = certCanvas.getBoundingClientRect();
+                        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                            const coords = getCanvasCoords(e);
+                            const layer = checkCollision(coords);
+                            if (layer) {
+                                certCanvas.classList.add('grab');
+                            } else {
+                                certCanvas.classList.remove('grab');
+                            }
+                        } else {
+                            certCanvas.classList.remove('grab');
+                        }
+                        return;
+                    }
+
+                    const coords = getCanvasCoords(e);
+                    let newX = coords.x - dragStartOffset.x;
+                    let newY = coords.y - dragStartOffset.y;
+                    
+                    let pctX = Math.min(100, Math.max(0, (newX / certCanvas.width) * 100));
+                    let pctY = Math.min(100, Math.max(0, (newY / certCanvas.height) * 100));
+                    
+                    pctX = Math.round(pctX * 10) / 10;
+                    pctY = Math.round(pctY * 10) / 10;
+
+                    if (activeDragLayer === 1) {
+                        const sliderX = document.getElementById('certPosX');
+                        const sliderY = document.getElementById('certPosY');
+                        if (sliderX) sliderX.value = pctX;
+                        if (sliderY) sliderY.value = pctY;
+                    } else {
+                        const sliderX = document.getElementById('certText2PosX');
+                        const sliderY = document.getElementById('certText2PosY');
+                        if (sliderX) sliderX.value = pctX;
+                        if (sliderY) sliderY.value = pctY;
+                    }
+
+                    updateSliderLabels();
+                    drawCertificate(getActiveName());
+                });
+
+                window.addEventListener('touchmove', (e) => {
+                    if (!activeDragLayer) return;
+
+                    const coords = getCanvasCoords(e);
+                    let newX = coords.x - dragStartOffset.x;
+                    let newY = coords.y - dragStartOffset.y;
+                    
+                    let pctX = Math.min(100, Math.max(0, (newX / certCanvas.width) * 100));
+                    let pctY = Math.min(100, Math.max(0, (newY / certCanvas.height) * 100));
+                    
+                    pctX = Math.round(pctX * 10) / 10;
+                    pctY = Math.round(pctY * 10) / 10;
+
+                    if (activeDragLayer === 1) {
+                        const sliderX = document.getElementById('certPosX');
+                        const sliderY = document.getElementById('certPosY');
+                        if (sliderX) sliderX.value = pctX;
+                        if (sliderY) sliderY.value = pctY;
+                    } else {
+                        const sliderX = document.getElementById('certText2PosX');
+                        const sliderY = document.getElementById('certText2PosY');
+                        if (sliderX) sliderX.value = pctX;
+                        if (sliderY) sliderY.value = pctY;
+                    }
+
+                    updateSliderLabels();
+                    drawCertificate(getActiveName());
+                    
+                    e.preventDefault();
+                }, { passive: false });
+
+                const endDrag = () => {
+                    if (activeDragLayer) {
+                        activeDragLayer = null;
+                        certCanvas.classList.remove('grabbing');
+                    }
+                };
+
+                window.addEventListener('mouseup', endDrag);
+                window.addEventListener('touchend', endDrag);
             };
 
             // Connector inputs
@@ -2111,18 +2870,44 @@ Sinan Studio</textarea>
                 btnConnectSheet.addEventListener('click', () => {
                     const urlVal = certSheetUrl.value.trim();
                     if (!urlVal) {
-                        alert("Please enter a Google Sheet URL.");
+                        alert("Please enter a Google Sheet URL or ID.");
                         return;
                     }
 
-                    const match = urlVal.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-                    if (!match) {
-                        printConsoleLine("[ERR] Invalid Google Sheets URL format.", "error");
-                        return;
-                    }
+                    let csvExportUrl = "";
+                    const urlLower = urlVal.toLowerCase();
 
-                    const sheetId = match[1];
-                    const csvExportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+                    // 1. Check if it's already a direct published CSV url
+                    if (urlLower.includes('output=csv') || urlLower.endsWith('.csv')) {
+                        csvExportUrl = urlVal;
+                    }
+                    // 2. Check if it's a published web link (e.g. /spreadsheets/d/e/.../pubhtml)
+                    else if (urlLower.includes('/spreadsheets/d/e/')) {
+                        const matchPub = urlVal.match(/\/spreadsheets\/d\/e\/([a-zA-Z0-9-_]+)/);
+                        if (matchPub) {
+                            csvExportUrl = `https://docs.google.com/spreadsheets/d/e/${matchPub[1]}/pub?output=csv`;
+                        } else {
+                            printConsoleLine("[ERR] Invalid Google Sheets Published URL format.", "error");
+                            return;
+                        }
+                    }
+                    // 3. Regular sharing spreadsheet link (/spreadsheets/d/...)
+                    else if (urlLower.includes('/spreadsheets/d/')) {
+                        const matchId = urlVal.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+                        if (matchId) {
+                            // Use Google Visualization API (out:csv) which supports CORS dynamically!
+                            csvExportUrl = `https://docs.google.com/spreadsheets/d/${matchId[1]}/gviz/tq?tqx=out:csv`;
+                        } else {
+                            printConsoleLine("[ERR] Invalid Google Sheets sharing URL format.", "error");
+                            return;
+                        }
+                    }
+                    // 4. Raw Spreadsheet ID directly (no slashes)
+                    else if (/^[a-zA-Z0-9-_]+$/.test(urlVal)) {
+                        csvExportUrl = `https://docs.google.com/spreadsheets/d/${urlVal}/gviz/tq?tqx=out:csv`;
+                    } else {
+                        csvExportUrl = urlVal; // fallback
+                    }
 
                     printConsoleLine(`[SYS] Requesting dataset from GSheet link...`, 'info');
                     
@@ -2138,7 +2923,7 @@ Sinan Studio</textarea>
                                 populateRecipientsTable();
                                 printConsoleLine(`[SYS] Google Sheet sync active. Imported ${parsed.length} recipients.`, 'success');
                             } else {
-                                printConsoleLine(`[ERR] Document compiled but structure is empty. Check row headers.`, 'error');
+                                printConsoleLine(`[ERR] Document compiled but structure is empty. Check row headers (Name, Email).`, 'error');
                             }
                         })
                         .catch(err => {
@@ -2148,7 +2933,22 @@ Sinan Studio</textarea>
                 });
             }
 
-            const populateRecipientsTable = () => {
+            const updateStartButtonState = () => {
+                const checkedCount = document.querySelectorAll('.rec-checkbox:checked').length;
+                const btn = document.getElementById('btnStartAutomation');
+                if (btn) {
+                    if (checkedCount > 0) {
+                        btn.innerHTML = `<i class="fa-solid fa-play"></i> Run Selected (${checkedCount})`;
+                    } else {
+                        btn.innerHTML = `<i class="fa-solid fa-play"></i> Start Batch Run`;
+                    }
+                }
+            };
+
+            const populateRecipientsTable = (keepCheckedIndices = null) => {
+                // Get indices of checked rows before clearing
+                const checkedIndices = keepCheckedIndices || Array.from(document.querySelectorAll('.rec-checkbox:checked')).map(cb => parseInt(cb.dataset.index));
+
                 const tbody = document.getElementById('recipientsTableBody');
                 if (!tbody) return;
                 tbody.innerHTML = '';
@@ -2179,6 +2979,12 @@ Sinan Studio</textarea>
                     chk.style.cursor = 'pointer';
                     chk.style.accentColor = 'var(--accent-crimson, #ff3366)';
                     chk.dataset.index = index;
+                    if (checkedIndices.includes(index)) {
+                        chk.checked = true;
+                    }
+                    chk.addEventListener('change', () => {
+                        updateStartButtonState();
+                    });
                     tdCheck.appendChild(chk);
                     
                     const tdName = document.createElement('td');
@@ -2212,7 +3018,7 @@ Sinan Studio</textarea>
                             link.download = `Certificate_${rec.name.replace(/\s+/g, '_')}.png`;
                             link.href = certCanvas.toDataURL('image/png');
                             link.click();
-                            drawCertificate(certRecipients[0] ? certRecipients[0].name : "Student Name");
+                            drawCertificate(getActiveName());
                         }
                     });
 
@@ -2228,6 +3034,7 @@ Sinan Studio</textarea>
                 if (certRecipients.length > 0) {
                     drawCertificate(certRecipients[0].name);
                 }
+                updateStartButtonState();
             };
 
             // Selection checkboxes and clearing
@@ -2238,6 +3045,7 @@ Sinan Studio</textarea>
                     checkboxes.forEach(cb => {
                         cb.checked = e.target.checked;
                     });
+                    updateStartButtonState();
                 });
             }
 
@@ -2263,7 +3071,7 @@ Sinan Studio</textarea>
                             }
                         });
 
-                        populateRecipientsTable();
+                        populateRecipientsTable([]);
 
                         if (certRecipients.length > 0) {
                             drawCertificate(certRecipients[0].name);
@@ -2300,28 +3108,46 @@ Sinan Studio</textarea>
                         return;
                     }
 
+                    // Check which checkboxes are checked for custom sending selection
+                    const checkboxes = document.querySelectorAll('.rec-checkbox:checked');
+                    let recipientsToProcess = [];
+                    const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
+
+                    if (checkboxes.length > 0) {
+                        recipientsToProcess = Array.from(checkboxes).map(cb => {
+                            const index = parseInt(cb.dataset.index);
+                            return { ref: certRecipients[index], index };
+                        });
+                        printConsoleLine(`[SYS] Triggered batch compile sequence for ${recipientsToProcess.length} SELECTED recipients.`, 'info');
+                    } else {
+                        recipientsToProcess = certRecipients.map((rec, index) => ({ ref: rec, index }));
+                        printConsoleLine(`[SYS] Triggered batch compile sequence for ALL ${certRecipients.length} recipients.`, 'info');
+                    }
+
                     btnStartAutomation.disabled = true;
                     btnStartAutomation.style.opacity = '0.6';
                     if (btnDownloadZip) btnDownloadZip.disabled = true;
                     
-                    printConsoleLine(`[SYS] Triggered batch compile sequence for ${certRecipients.length} recipients.`, 'info');
-                    
                     let currentIndex = 0;
                     const runNext = () => {
-                        if (currentIndex >= certRecipients.length) {
+                        if (currentIndex >= recipientsToProcess.length) {
                             btnStartAutomation.disabled = false;
                             btnStartAutomation.style.opacity = '1';
                             if (btnDownloadZip) {
                                 btnDownloadZip.disabled = false;
                                 btnDownloadZip.style.opacity = '1';
                             }
-                            printConsoleLine(`[SYS] Batch run finished. All certificates compiled and emailed successfully!`, 'success');
+                            printConsoleLine(`[SYS] Batch run finished. Selected certificates compiled and emailed successfully!`, 'success');
+                            updateStartButtonState();
                             return;
                         }
 
-                        const recipient = certRecipients[currentIndex];
+                        const item = recipientsToProcess[currentIndex];
+                        const recipient = item.ref;
                         recipient.status = 'generating';
-                        populateRecipientsTable();
+                        
+                        // Populate while preserving checked status
+                        populateRecipientsTable(selectedIndices);
 
                         drawCertificate(recipient.name);
                         generatedImages[recipient.name] = certCanvas.toDataURL('image/png');
@@ -2330,7 +3156,7 @@ Sinan Studio</textarea>
 
                         setTimeout(() => {
                             recipient.status = 'success';
-                            populateRecipientsTable();
+                            populateRecipientsTable(selectedIndices);
 
                             const subject = document.getElementById('certEmailSubject').value.replace('{Name}', recipient.name);
                             printConsoleLine(`[SMTP] Packing PDF attachment and sending to <${recipient.email}> with subject: "${subject}"...`, 'info');
@@ -2339,7 +3165,7 @@ Sinan Studio</textarea>
                                 printConsoleLine(`[SMTP] Dispatch complete for <${recipient.email}>. Status: 200 OK.`, 'success');
                                 
                                 currentIndex++;
-                                const progressPct = Math.round((currentIndex / certRecipients.length) * 100);
+                                const progressPct = Math.round((currentIndex / recipientsToProcess.length) * 100);
                                 if (consoleProgressBar) consoleProgressBar.style.width = `${progressPct}%`;
                                 if (consoleProgressText) consoleProgressText.innerText = `${progressPct}% Complete`;
 
@@ -2355,13 +3181,24 @@ Sinan Studio</textarea>
 
             if (btnDownloadZip) {
                 btnDownloadZip.addEventListener('click', () => {
-                    const keys = Object.keys(generatedImages);
-                    if (keys.length === 0) {
-                        alert("Please run the batch automation first.");
+                    // Get only checked/selected names or all compiled images
+                    const checkboxes = document.querySelectorAll('.rec-checkbox:checked');
+                    let namesToDownload = [];
+                    if (checkboxes.length > 0) {
+                        namesToDownload = Array.from(checkboxes)
+                            .map(cb => certRecipients[parseInt(cb.dataset.index)].name)
+                            .filter(name => generatedImages[name]);
+                    } else {
+                        namesToDownload = Object.keys(generatedImages);
+                    }
+
+                    if (namesToDownload.length === 0) {
+                        alert("No compiled certificates found for the selected recipients. Please run batch automation first.");
                         return;
                     }
-                    printConsoleLine(`[SYS] Preparing batch download of ${keys.length} certificates.`, 'info');
-                    keys.forEach((name, i) => {
+
+                    printConsoleLine(`[SYS] Preparing batch download of ${namesToDownload.length} certificates.`, 'info');
+                    namesToDownload.forEach((name, i) => {
                         setTimeout(() => {
                             const link = document.createElement('a');
                             link.download = `Certificate_${name.replace(/\s+/g, '_')}.png`;
@@ -2418,16 +3255,35 @@ Sinan Studio</textarea>
                 });
             }
 
-            addControlListeners();
-            updateSliderLabels();
-            populateRecipientsTable();
+            const initCertToolsLogic = () => {
+                addControlListeners();
+                updateSliderLabels();
+                initCollapsibles();
+                initTypographyToolbars();
+                initDragAndDrop();
+                populateRecipientsTable();
+            };
 
             // Run session validation on initialization
             checkSession();
-        });
+            refreshAdminBadge(); // initial badge check!
+        };
+
+        if (useSimulation) {
+            initializeAppLogic();
+        } else {
+            loadFirebaseScripts((success) => {
+                if (!success) {
+                    console.warn("Failed to load Firebase libraries. Falling back to local offline simulation.");
+                    useSimulation = true;
+                }
+                initializeAppLogic();
+            });
+        }
+    });
     </script>
 
     <!-- Core App Interactive Script -->
-    <script src="app.js"></script>
+    <script src="app.js?v=1.0.2"></script>
 </body>
 </html>

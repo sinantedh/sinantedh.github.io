@@ -199,11 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const updateCount = () => {
                 current += increment;
+                const suffix = stat.getAttribute('data-suffix') || '';
                 if (current < target) {
-                    stat.innerText = Math.ceil(current);
+                    stat.innerText = Math.ceil(current) + suffix;
                     requestAnimationFrame(updateCount);
                 } else {
-                    stat.innerText = target;
+                    stat.innerText = target + suffix;
                 }
             };
             updateCount();
@@ -359,6 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
             date: 'May 2026',
             description: 'Crafted a typographic mark and branding toolkit for an upscale creative firm. Focused on high-end layouts, stationary sets, letterheads, and print books, ensuring precise editorial spacing and elegant visual hierarchy.',
             link: '#'
+        },
+        '11': {
+            title: 'Craft & Capture — IEDC SIAS',
+            tag: 'Graphics Design',
+            image: './IEDC CRAFT & CAPTURE.jpg',
+            client: 'IEDC SIAS',
+            tools: 'Canva',
+            date: 'June 2026',
+            description: 'Poster design for an <strong>inter-college poster and reel-making competition</strong> organized by the <strong>Innovation & Entrepreneurship Development Centre, SIAS</strong>.<br><br>Designed to pull attention with <strong>high-contrast typography</strong> and a <strong>deep purple gradient aesthetic</strong>, while keeping all event information scannable at a glance.',
+            link: '#'
         }
     };
 
@@ -378,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalClient.innerText = data.client;
                     modalTools.innerText = data.tools;
                     modalDate.innerText = data.date;
-                    modalDescription.innerText = data.description;
+                    modalDescription.innerHTML = data.description;
                     modalProjectLink.setAttribute('href', data.link);
 
                     // Show Modal

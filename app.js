@@ -114,18 +114,351 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${r}, ${g}, ${b}`;
     };
 
+    // Spiderman Theme variables and handlers
+    let spideyCanvas = null;
+    let ctx = null;
+    let cursorGlow = null;
+    let senseContainer = null;
+    let hangingSpider = null;
+    let spideyActive = false;
+    let canvasResizeHandler = null;
+    let windowClickHandler = null;
+    let mouseMoveHandler = null;
+    let scrollHandler = null;
+    let activeWebs = [];
+
+    // Canvas Web Physics Update and Draw Loop
+    const updateAndDrawWebs = () => {
+        if (!ctx || !spideyCanvas) return;
+        ctx.clearRect(0, 0, spideyCanvas.width, spideyCanvas.height);
+        
+        let hasActiveWebs = false;
+        
+        activeWebs.forEach((web) => {
+            web.age++;
+            
+            if (web.state === "shooting") {
+                const dx = web.targetX - web.startX;
+                const dy = web.targetY - web.startY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist < 5) {
+                    web.currentX = web.targetX;
+                    web.currentY = web.targetY;
+                    web.state = "splat";
+                    web.age = 0;
+                } else {
+                    const speed = 50; 
+                    const dirX = dx / dist;
+                    const dirY = dy / dist;
+                    
+                    web.currentX += dirX * speed;
+                    web.currentY += dirY * speed;
+                    
+                    const distTravelled = Math.sqrt((web.currentX - web.startX)**2 + (web.currentY - web.startY)**2);
+                    if (distTravelled >= dist) {
+                        web.currentX = web.targetX;
+                        web.currentY = web.targetY;
+                        web.state = "splat";
+                        web.age = 0;
+                    }
+                }
+                hasActiveWebs = true;
+            } else {
+                if (web.age > web.maxAge) {
+                    web.opacity = 1 - (web.age - web.maxAge) / web.fadeAge;
+                    if (web.opacity <= 0) {
+                        web.opacity = 0;
+                    } else {
+                        hasActiveWebs = true;
+                    }
+                } else {
+                    hasActiveWebs = true;
+                }
+            }
+            
+            if (web.opacity > 0) {
+                ctx.save();
+                ctx.globalAlpha = web.opacity;
+                ctx.strokeStyle = "#ffffff";
+                ctx.shadowColor = "rgba(239, 35, 60, 0.5)";
+                ctx.shadowBlur = 5;
+                ctx.lineWidth = 2.5;
+                
+                ctx.beginPath();
+                ctx.moveTo(web.startX, web.startY);
+                
+                // Draw dynamic wavy web string
+                const midX = (web.startX + web.currentX) / 2;
+                const midY = (web.startY + web.currentY) / 2;
+                const normalX = -(web.currentY - web.startY) / 100;
+                const normalY = (web.currentX - web.startX) / 100;
+                const waveX = midX + Math.sin(web.age * 0.15) * normalX * 0.15;
+                const waveY = midY + Math.sin(web.age * 0.15) * normalY * 0.15;
+                
+                ctx.quadraticCurveTo(waveX, waveY, web.currentX, web.currentY);
+                ctx.stroke();
+                
+                // Draw target web splat
+                if (web.state === "splat") {
+                    ctx.strokeStyle = "#ffffff";
+                    ctx.lineWidth = 1.5;
+                    
+                    web.splatLines.forEach(line => {
+                        ctx.beginPath();
+                        ctx.moveTo(web.targetX, web.targetY);
+                        ctx.lineTo(
+                            web.targetX + line.dx * Math.min(1, web.age / 5), 
+                            web.targetY + line.dy * Math.min(1, web.age / 5)
+                        );
+                        ctx.stroke();
+                    });
+                    
+                    ctx.lineWidth = 1;
+                    const rings = 3;
+                    for (let r = 1; r <= rings; r++) {
+                        const ringRadius = (r * 8) * Math.min(1, web.age / 8);
+                        ctx.beginPath();
+                        for (let i = 0; i <= 8; i++) {
+                            const angle = (i * Math.PI) / 4;
+                            const x = web.targetX + Math.cos(angle) * ringRadius;
+                            const y = web.targetY + Math.sin(angle) * ringRadius;
+                            
+                            if (i === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.closePath();
+                        ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+        });
+        
+        activeWebs = activeWebs.filter(web => web.opacity > 0);
+        if (hasActiveWebs && spideyActive) {
+            requestAnimationFrame(updateAndDrawWebs);
+        }
+    };
+
+    const shootWeb = (targetX, targetY) => {
+        const clickCount = activeWebs.length;
+        const startX = clickCount % 2 === 0 ? 0 : window.innerWidth;
+        const startY = window.innerHeight;
+        
+        const splatLines = [];
+        const numLines = 8;
+        for (let i = 0; i < numLines; i++) {
+            const angle = (i * Math.PI) / 4;
+            const length = 12 + Math.random() * 18;
+            splatLines.push({
+                dx: Math.cos(angle) * length,
+                dy: Math.sin(angle) * length
+            });
+        }
+        
+        const newWeb = {
+            startX: startX,
+            startY: startY,
+            currentX: startX,
+            currentY: startY,
+            targetX: targetX,
+            targetY: targetY,
+            age: 0,
+            maxAge: 25, 
+            fadeAge: 20, 
+            state: "shooting",
+            splatLines: splatLines,
+            opacity: 1
+        };
+        
+        activeWebs.push(newWeb);
+        if (activeWebs.length === 1) {
+            requestAnimationFrame(updateAndDrawWebs);
+        }
+    };
+
+    const initSpidermanTheme = () => {
+        if (spideyActive) return;
+        spideyActive = true;
+        
+        // Canvas Setup
+        if (!document.getElementById('spidey-canvas')) {
+            spideyCanvas = document.createElement('canvas');
+            spideyCanvas.id = 'spidey-canvas';
+            document.body.appendChild(spideyCanvas);
+        } else {
+            spideyCanvas = document.getElementById('spidey-canvas');
+        }
+        ctx = spideyCanvas.getContext('2d');
+        
+        const resizeCanvas = () => {
+            if (spideyCanvas) {
+                spideyCanvas.width = window.innerWidth;
+                spideyCanvas.height = window.innerHeight;
+            }
+        };
+        resizeCanvas();
+        canvasResizeHandler = resizeCanvas;
+        window.addEventListener('resize', canvasResizeHandler);
+        
+        // Shooting webs click handler
+        windowClickHandler = (e) => {
+            if (e.target.closest('#customizerPanel, #customizerToggle, .customizer-panel, .customizer-toggle')) return;
+            shootWeb(e.clientX, e.clientY);
+        };
+        window.addEventListener('click', windowClickHandler);
+        
+        // Custom Spidey Cursor setup
+        if (!document.getElementById('spidey-cursor')) {
+            cursorGlow = document.createElement('div');
+            cursorGlow.id = 'spidey-cursor';
+            cursorGlow.className = 'spidey-cursor-glow';
+            
+            senseContainer = document.createElement('div');
+            senseContainer.className = 'spider-sense-container';
+            for (let i = 0; i < 5; i++) {
+                const line = document.createElement('div');
+                line.className = 'spider-sense-line';
+                const angles = [-30, -15, 0, 15, 30];
+                line.style.setProperty('--angle', `${angles[i]}deg`);
+                senseContainer.appendChild(line);
+            }
+            cursorGlow.appendChild(senseContainer);
+            document.body.appendChild(cursorGlow);
+        } else {
+            cursorGlow = document.getElementById('spidey-cursor');
+        }
+        
+        document.body.classList.add('custom-cursor-active');
+        
+        mouseMoveHandler = (e) => {
+            if (cursorGlow) {
+                cursorGlow.style.left = e.clientX + 'px';
+                cursorGlow.style.top = e.clientY + 'px';
+            }
+        };
+        document.addEventListener('mousemove', mouseMoveHandler);
+        
+        // Hanging Spider Setup
+        if (!document.getElementById('spidey-hanging-widget')) {
+            hangingSpider = document.createElement('div');
+            hangingSpider.id = 'spidey-hanging-widget';
+            hangingSpider.className = 'hanging-spider-container';
+            hangingSpider.innerHTML = `
+                <div class="hanging-spider-thread"></div>
+                <svg class="hanging-spider-body" viewBox="0 0 100 100">
+                    <circle cx="50" cy="45" r="10" fill="#EF233C" />
+                    <circle cx="50" cy="62" r="15" fill="#EF233C" />
+                    <path d="M42 42 Q25 28 20 20 M42 46 Q20 40 15 36 M40 52 Q18 55 20 62 M40 58 Q22 70 28 76" stroke="#EF233C" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                    <path d="M58 42 Q75 28 80 20 M58 46 Q80 40 85 36 M60 52 Q82 55 80 62 M60 58 Q78 70 72 76" stroke="#EF233C" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                    <ellipse cx="46" cy="42" rx="1.5" ry="3" fill="#FFF" />
+                    <ellipse cx="54" cy="42" rx="1.5" ry="3" fill="#FFF" />
+                </svg>
+            `;
+            document.body.appendChild(hangingSpider);
+        } else {
+            hangingSpider = document.getElementById('spidey-hanging-widget');
+        }
+        
+        const updateSpiderPos = () => {
+            if (!hangingSpider) return;
+            const scrollPercent = window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+            const drop = Math.min(320, scrollPercent * 500);
+            hangingSpider.style.transform = `translateY(${drop - 1000}px)`;
+        };
+        updateSpiderPos();
+        scrollHandler = updateSpiderPos;
+        window.addEventListener('scroll', scrollHandler);
+
+        // Update footer text for Spidey theme
+        const footerMeta = document.querySelector('.footer-meta p');
+        if (footerMeta) {
+            footerMeta.innerHTML = 'Designed by Sinan &middot; Spun with spider-sense & pixel perfection';
+        }
+    };
+
+    const cleanupSpidermanTheme = () => {
+        if (!spideyActive) return;
+        spideyActive = false;
+        
+        if (canvasResizeHandler) {
+            window.removeEventListener('resize', canvasResizeHandler);
+            canvasResizeHandler = null;
+        }
+        if (windowClickHandler) {
+            window.removeEventListener('click', windowClickHandler);
+            windowClickHandler = null;
+        }
+        if (mouseMoveHandler) {
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            mouseMoveHandler = null;
+        }
+        if (scrollHandler) {
+            window.removeEventListener('scroll', scrollHandler);
+            scrollHandler = null;
+        }
+        
+        if (spideyCanvas && spideyCanvas.parentNode) {
+            spideyCanvas.parentNode.removeChild(spideyCanvas);
+            spideyCanvas = null;
+            ctx = null;
+        }
+        if (cursorGlow && cursorGlow.parentNode) {
+            cursorGlow.parentNode.removeChild(cursorGlow);
+            cursorGlow = null;
+        }
+        if (hangingSpider && hangingSpider.parentNode) {
+            hangingSpider.parentNode.removeChild(hangingSpider);
+            hangingSpider = null;
+        }
+        
+        document.body.classList.remove('custom-cursor-active');
+        document.body.classList.remove('spider-sense-active');
+        activeWebs = [];
+
+        // Restore normal footer text
+        const footerMeta = document.querySelector('.footer-meta p');
+        if (footerMeta) {
+            footerMeta.innerHTML = 'Designed by Sinan &middot; WITH ELLAA KAZHIVUKALUM KOND';
+        }
+    };
+
     // Apply color accent updates
     const setAccentColor = (color) => {
         if (!color) return;
+        
+        if (color === 'spiderman') {
+            document.documentElement.style.setProperty('--accent-color', '#ef233c');
+            document.documentElement.style.setProperty('--accent-glow', 'rgba(239, 35, 60, 0.35)');
+            document.documentElement.style.setProperty('--accent-rgb', '239, 35, 60');
+            document.body.classList.add('spiderman-theme');
+            
+            localStorage.setItem('sinan-accent-color', 'spiderman');
+            
+            colorPresets.forEach(preset => {
+                preset.classList.remove('active');
+                if (preset.getAttribute('data-color') === 'spiderman') {
+                    preset.classList.add('active');
+                }
+            });
+            
+            initSpidermanTheme();
+            return;
+        }
+
+        if (document.body.classList.contains('spiderman-theme')) {
+            document.body.classList.remove('spiderman-theme');
+            cleanupSpidermanTheme();
+        }
+
         const rgb = hexToRgb(color);
         document.documentElement.style.setProperty('--accent-color', color);
         document.documentElement.style.setProperty('--accent-glow', `rgba(${rgb}, 0.3)`);
         document.documentElement.style.setProperty('--accent-rgb', rgb);
         
-        // Save choice in localStorage
         localStorage.setItem('sinan-accent-color', color);
 
-        // Manage active preset visual outlines
         colorPresets.forEach(preset => {
             preset.classList.remove('active');
             if (preset.getAttribute('data-color') === color) {
@@ -133,6 +466,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // Event delegation for Spider-Sense warning glows
+    document.addEventListener('mouseover', (e) => {
+        if (!spideyActive || !cursorGlow) return;
+        const clickable = e.target.closest('a, button, .color-preset, .view-project-btn, .customizer-toggle, input, textarea, [role="button"]');
+        if (clickable) {
+            cursorGlow.classList.add('spider-sense-active');
+        } else {
+            cursorGlow.classList.remove('spider-sense-active');
+        }
+    });
 
     // Color preset click events
     colorPresets.forEach(preset => {
@@ -369,6 +713,16 @@ document.addEventListener('DOMContentLoaded', () => {
             tools: 'Canva',
             date: 'June 2026',
             description: 'Poster design for an <strong>inter-college poster and reel-making competition</strong> organized by the <strong>Innovation & Entrepreneurship Development Centre, SIAS</strong>.<br><br>Designed to pull attention with <strong>high-contrast typography</strong> and a <strong>deep purple gradient aesthetic</strong>, while keeping all event information scannable at a glance.',
+            link: '#'
+        },
+        '12': {
+            title: 'Beachside Portrait',
+            tag: 'Photography',
+            image: './PHOTOGRAPHY/HAIFA.jpg',
+            client: 'Personal Shoot',
+            tools: 'Adobe Lightroom',
+            date: 'June 2026',
+            description: 'A beachside portrait shoot along the Kerala coastline — edited in <strong>Adobe Lightroom</strong>.<br><br>Focused on balancing the bright natural light with the subject, while keeping the waves, sand, and treeline true to the mood of the moment.',
             link: '#'
         }
     };

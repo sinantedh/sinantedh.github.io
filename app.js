@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '12': {
             title: 'Beachside Portrait',
             tag: 'Photography',
-            image: './PHOTOGRAPHY/HAIFA.jpg',
+            image: './HAIFA.jpg',
             client: 'Personal Shoot',
             tools: 'Adobe Lightroom',
             date: 'June 2026',

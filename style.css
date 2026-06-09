@@ -883,6 +883,53 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
+/* Stacked Folder Effect for Carousels/Multiple Designs */
+.portfolio-card.stacked-folder {
+    position: relative;
+    overflow: visible; /* Allows pseudo-elements (background pages) to render outside card borders */
+}
+.portfolio-card.stacked-folder::before,
+.portfolio-card.stacked-folder::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    z-index: -1;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+    pointer-events: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+/* First background card (rotated slightly) */
+.portfolio-card.stacked-folder::before {
+    transform: translate(6px, 6px) rotate(1.5deg);
+    background-image: var(--stack-img-1);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.85;
+}
+/* Second background card (rotated slightly more) */
+.portfolio-card.stacked-folder::after {
+    transform: translate(12px, 12px) rotate(3deg);
+    background-image: var(--stack-img-2, none);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.7;
+    display: var(--stack-img-2-display, block);
+}
+/* Hover effect to fan them out */
+.portfolio-card.stacked-folder:hover::before {
+    transform: translate(12px, 10px) rotate(3.5deg);
+    opacity: 0.95;
+}
+.portfolio-card.stacked-folder:hover::after {
+    transform: translate(24px, 18px) rotate(7deg);
+    opacity: 0.85;
+}
+
 .portfolio-img-wrapper {
     position: relative;
     width: 100%;

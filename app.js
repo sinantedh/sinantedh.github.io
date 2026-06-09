@@ -721,31 +721,81 @@ document.addEventListener('DOMContentLoaded', () => {
             image: './HAIFA.jpg',
             client: 'Personal Shoot',
             tools: 'Adobe Lightroom',
-            date: 'June 2026',
+            date: 'April 2026',
             description: 'A beachside portrait shoot along the Kerala coastline — edited in <strong>Adobe Lightroom</strong>.<br><br>Focused on balancing the bright natural light with the subject, while keeping the waves, sand, and treeline true to the mood of the moment.',
+            link: '#'
+        },
+        '13': {
+            title: 'YFYD Instagram Carousels',
+            tag: 'Social Media',
+            image: './cxo carousels 01.png',
+            images: ['./cxo carousels 01.png', './cxo carousels 02.png', './cxo carousels 03.png'],
+            client: 'YFYD',
+            tools: 'Canva',
+            date: 'May 2026',
+            description: 'A curated carousel post series engineered for <strong>YFYD\'s Instagram feed</strong>.<br><br>Focused on high-impact visual hooks, clean editorial typography hierarchy, and seamless slide transitions to maximize audience retention and page swipe metrics.',
+            link: '#'
+        },
+        '14': {
+            title: 'YFYD Easter Greeting',
+            tag: 'Social Media',
+            image: './easter.png',
+            client: 'YFYD',
+            tools: 'Canva',
+            date: 'April 2026',
+            description: 'Easter greeting post designed for <strong>Youth for Youth Development (YFYD)</strong>.<br><br>Balanced a reverent tone with festive typography — keeping the spiritual weight of the occasion without losing warmth.',
+            link: '#'
+        },
+        '15': {
+            title: 'SFI Admissions Help Desk',
+            tag: 'Social Media',
+            image: './sfi admsn 1.png',
+            images: ['./sfi admsn 1.png', './sfi admsn 2.png'],
+            client: 'SFI College Unit, SIAS',
+            tools: 'Canva',
+            date: 'June 2025',
+            description: 'Admission Help Desk post designed for <strong>SFI College Unit, SIAS (2025–26)</strong>.<br><br>An informational graphic consolidating UG and PG contact details with a clean, scannable layout for social media distribution.',
             link: '#'
         }
     };
-
+ 
     // Open Modal
     if (viewProjectBtns && viewProjectBtns.length > 0) {
         viewProjectBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const projectId = btn.getAttribute('data-project-id');
                 const data = projectsData[projectId];
-
+ 
                 if (data && modalTitle && modalTag && modalImage && modalClient && modalTools && modalDate && modalDescription && modalProjectLink && projectModal) {
                     // Populate Modal Elements
                     modalTitle.innerText = data.title;
                     modalTag.innerText = data.tag;
-                    modalImage.setAttribute('src', data.image);
-                    modalImage.setAttribute('alt', data.title);
                     modalClient.innerText = data.client;
                     modalTools.innerText = data.tools;
                     modalDate.innerText = data.date;
                     modalDescription.innerHTML = data.description;
                     modalProjectLink.setAttribute('href', data.link);
-
+ 
+                    // Handle single vs multiple images
+                    const slidesContainer = document.getElementById('modalSlidesContainer');
+                    if (data.images && data.images.length > 0) {
+                        modalImage.style.display = 'none';
+                        if (slidesContainer) {
+                            slidesContainer.style.display = 'flex';
+                            slidesContainer.innerHTML = data.images.map((imgSrc, i) => 
+                                `<img src="${imgSrc}" alt="${data.title} - Slide ${i+1}" style="width:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); margin-bottom: 5px;">`
+                            ).join('');
+                        }
+                    } else {
+                        modalImage.style.display = 'block';
+                        modalImage.setAttribute('src', data.image);
+                        modalImage.setAttribute('alt', data.title);
+                        if (slidesContainer) {
+                            slidesContainer.style.display = 'none';
+                            slidesContainer.innerHTML = '';
+                        }
+                    }
+ 
                     // Show Modal
                     projectModal.classList.add('active');
                     document.body.style.overflow = 'hidden'; // Lock background scrolling
